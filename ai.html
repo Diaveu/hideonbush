@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>智慧回收識別系統</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Base Styles & Typography */
+    :root {
+      --primary-green: #2c7a7b;
+      --dark-green: #2c7a7b;
+      --light-green: #e8f5e9;
+      --text-dark: #333;
+      --text-medium: #666;
+      --text-light: #757575;
+      --bg-light: #f2f5f7;
+      --border-light: #e0e0e0;
+      --shadow-light: rgba(0, 0, 0, 0.1);
+      --shadow-medium: rgba(0, 0, 0, 0.2);
+      --shadow-green: rgba(46, 204, 113, 0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+    
+    /* App Container */
+    .app-container {
+      max-width: 414px; /* Common mobile width */
+      height: 100vh;
+      margin: 0 auto;
+      background-color: white;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 20px var(--shadow-light);
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Header */
+    .app-header {
+      background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+      color: white;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      flex-shrink: 0; /* Prevent shrinking */
+    }
+    
+    .app-title {
+      font-size: 20px;
+      font-weight: 500;
+    }
+    
+    .header-buttons {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .header-button {
+      background-color: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    
+    .header-button:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+    
+    /* Camera View */
+    .camera-view {
+      width: 100%;
+      aspect-ratio: 1; /* Ensures a square view */
+      background-color: #000;
+      position: relative;
+      overflow: hidden;
+      display: flex; /* For overlay centering */
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .camera-feed {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.7;
+    }
+    
+    .camera-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-align: center;
+      padding: 20px; /* Add some padding */
+    }
+    
+    .scanning-animation {
+      width: 200px;
+      height: 200px;
+      border-radius: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.8);
+      position: relative;
+      overflow: hidden; /* Ensure line stays within */
+    }
+    
+    .scanning-line {
+      position: absolute;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, rgba(46, 204, 113, 0), var(--primary-green), rgba(46, 204, 113, 0));
+      animation: scan 1.8s linear infinite; /* Adjusted speed */
+    }
+    
+    @keyframes scan {
+      0% { top: 10%; }
+      50% { top: 90%; }
+      100% { top: 10%; }
+    }
+    
+    .scan-status {
+      font-size: 18px;
+      margin-top: 16px;
+      font-weight: 500;
+    }
+    
+    .camera-guide {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: rgba(255, 255, 255, 0.9); /* Increased visibility */
+    }
+    
+    .camera-icon {
+      margin-bottom: 8px;
+      width: 48px;
+      height: 48px;
+    }
+    
+    /* Detection Result */
+    .detection-result {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 5;
+    }
+    
+    .result-card {
+      background-color: white;
+      width: 85%; /* Slightly wider */
+      max-width: 350px; /* Max width for larger screens */
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 25px var(--shadow-medium);
+      text-align: center; /* Center content */
+    }
+    
+    .result-title {
+      font-size: 24px; /* Larger font */
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--dark-green);
+    }
+    
+    .category-container {
+      margin-bottom: 16px;
+    }
+
+    .result-category {
+      font-size: 16px;
+      padding: 8px 16px; /* Increased padding */
+      background-color: var(--light-green);
+      border-radius: 20px;
+      color: #2e7d32;
+      display: inline-block;
+      font-weight: 500;
+    }
+    
+    .accuracy-bar {
+      width: 100%;
+      height: 12px;
+      background-color: #e0e0e0;
+      border-radius: 6px;
+      margin-bottom: 8px; /* Increased margin */
+      overflow: hidden;
+    }
+    
+    .accuracy-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary-green), var(--dark-green));
+      border-radius: 6px;
+      transition: width 0.5s ease-out; /* Smooth transition for accuracy */
+    }
+    
+    .accuracy-label {
+      font-size: 14px;
+      color: var(--text-medium);
+      text-align: right;
+      margin-bottom: 16px; /* Added margin */
+    }
+    
+    .recycling-tip {
+      background-color: var(--light-green);
+      padding: 14px; /* Increased padding */
+      border-radius: 8px;
+      margin: 20px 0; /* Adjusted margin */
+      font-size: 14px;
+      color: #2e7d32;
+      line-height: 1.5;
+    }
+    
+    .close-result {
+      background-color: var(--dark-green);
+      color: white;
+      border: none;
+      padding: 14px; /* Increased padding */
+      width: 100%;
+      border-radius: 8px;
+      font-weight: 600;
+      margin-top: 16px; /* Adjusted margin */
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    
+    .close-result:hover {
+      background-color: #2c7a7b;
+    }
+    
+    /* Control Section */
+    .control-section {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 16px; /* Increased top padding */
+      flex-grow: 1; /* Allow to grow and fill space */
+      overflow-y: auto; /* Enable scrolling if content exceeds height */
+    }
+    
+    .scan-button {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+      border: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 10px var(--shadow-green);
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .scan-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 12px rgba(46, 204, 113, 0.4);
+    }
+    
+    .scan-count {
+      font-size: 14px;
+      color: var(--text-medium);
+      font-weight: 400;
+    }
+    
+    /* Info Card */
+    .info-card, .stats-card {
+      width: 100%;
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Added subtle shadow */
+    }
+
+    .info-card {
+      background-color: #e3f2fd;
+      border: 1px solid #bbdefb;
+    }
+    
+    .info-title {
+      font-size: 18px; /* Slightly larger */
+      font-weight: 600;
+      color: #1976d2;
+      margin-bottom: 10px;
+    }
+    
+    .info-list {
+      list-style-type: disc; /* Use disc for list items */
+      list-style-position: outside; /* Bullet outside the text */
+      font-size: 14px;
+      color: #0d47a1;
+      padding-left: 20px; /* Indent list items */
+    }
+    
+    .info-list li {
+      margin-bottom: 8px; /* Increased spacing */
+    }
+    
+    /* Stats Card */
+    .stats-card {
+      background-color: var(--light-green);
+      border: 1px solid #c8e6c9;
+    }
+    
+    .stats-title {
+      font-size: 18px; /* Slightly larger */
+      font-weight: 600;
+      color: #2e7d32;
+      margin-bottom: 10px;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Responsive grid */
+      gap: 12px; /* Increased gap */
+    }
+    
+    .stat-item {
+      background-color: white;
+      padding: 12px; /* Increased padding */
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      text-align: center;
+    }
+    
+    .stat-label {
+      font-size: 13px; /* Slightly larger */
+      color: var(--text-medium); /* More neutral color */
+      margin-bottom: 4px;
+    }
+    
+    .stat-value {
+      font-size: 18px; /* Larger value */
+      font-weight: 700;
+      color: var(--dark-green); /* Green color */
+    }
+    
+    /* Bottom Tabs */
+    .bottom-tabs {
+      position: sticky; /* Sticky to bottom */
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      background-color: white;
+      border-top: 1px solid var(--border-light);
+      height: 60px;
+      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow upwards */
+      flex-shrink: 0; /* Prevent shrinking */
+    }
+    
+    .tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: var(--text-light);
+      transition: color 0.2s ease;
+      cursor: pointer;
+      padding: 8px 0; /* Added padding */
+    }
+    
+    .tab.active {
+      color: var(--dark-green);
+    }
+    
+    .tab-icon {
+      margin-bottom: 4px;
+      width: 24px; /* Standard icon size */
+      height: 24px;
+    }
+    
+    .tab-label {
+      font-size: 11px; /* Slightly smaller for compactness */
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <h1 class="app-title">GAIABLOOM回收識別系統</h1>
+      <div class="header-buttons">
+        <button class="header-button" aria-label="Info">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+        </button>
+        <button class="header-button" aria-label="Bookmarks">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+    
+    <main class="camera-view">
+      <img src="https://via.placeholder.com/414x414?text=Camera+Feed" alt="Camera Feed" class="camera-feed">
+      
+      <div class="camera-overlay" id="cameraGuideOverlay">
+        <div class="camera-guide">
+          <svg class="camera-icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
+          <span>對準回收物進行掃描</span>
+        </div>
+      </div>
+      
+      <div class="camera-overlay" id="scanningOverlay" style="display: none;">
+        <div class="scanning-animation">
+          <div class="scanning-line"></div>
+        </div>
+        <div class="scan-status">正在辨識中...</div>
+      </div>
+      
+      <div class="detection-result" id="resultOverlay" style="display: none;">
+        <div class="result-card">
+          <h2 class="result-title">塑膠</h2>
+          <div class="category-container">
+            <span class="result-category">可回收</span>
+          </div>
+          <div class="accuracy-bar">
+            <div class="accuracy-fill" style="width: 85%;"></div>
+          </div>
+          <p class="accuracy-label">辨識準確度: 85%</p>
+          <div class="recycling-tip">
+            <strong>回收小提示:</strong> 請清洗且壓扁後再回收，去除標籤可提高回收品質。
+          </div>
+          <button class="close-result">返回相機</button>
+        </div>
+      </div>
+    </main>
+    
+    <section class="control-section">
+      <button class="scan-button" aria-label="Scan Item">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+          <circle cx="12" cy="13" r="4"></circle>
+        </svg>
+      </button>
+      <p class="scan-count">今日已辨識: <strong>14</strong> 個物品</p>
+      
+      <div class="info-card" id="infoCard">
+        <h3 class="info-title">回收小知識</h3>
+        <ul class="info-list">
+          <li>台灣每年產生近800萬噸的垃圾</li>
+          <li>正確回收可減少55%的資源浪費</li>
+          <li>塑膠瓶需450年才能自然分解</li>
+          <li>回收一噸紙可以挽救17棵樹</li>
+          <li>回收鋁罐比生產新鋁能節省95%的能源</li>
+        </ul>
+      </div>
+      
+      <div class="stats-card" id="statsCard" style="display: none;">
+        <h3 class="stats-title">您的環保成就</h3>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-label">總回收物</div>
+            <div class="stat-value">327 件</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">減少塑膠</div>
+            <div class="stat-value">45.2 公斤</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">減少碳排放</div>
+            <div class="stat-value">158.6 公斤</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">環保積分</div>
+            <div class="stat-value">245 點</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <nav class="bottom-tabs">
+      <div class="tab active" data-tab="scan">
+        <svg class="tab-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+          <circle cx="12" cy="13" r="4"></circle>
+        </svg>
+        <span class="tab-label">掃描</span>
+      </div>
+      <div class="tab" data-tab="stats">
+        <svg class="tab-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+        </svg>
+        <span class="tab-label">統計</span>
+      </div>
+      <div class="tab" data-tab="guide">
+        <svg class="tab-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+        </svg>
+        <span class="tab-label">指南</span>
+      </div>
+      <div class="tab" data-tab="settings">
+        <svg class="tab-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+        <span class="tab-label">設定</span>
+      </div>
+    </nav>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const scanButton = document.querySelector('.scan-button');
+      const closeResultButton = document.querySelector('.close-result');
+      const cameraGuideOverlay = document.getElementById('cameraGuideOverlay');
+      const scanningOverlay = document.getElementById('scanningOverlay');
+      const resultOverlay = document.getElementById('resultOverlay');
+      const infoCard = document.getElementById('infoCard');
+      const statsCard = document.getElementById('statsCard');
+      const bottomTabs = document.querySelectorAll('.bottom-tabs .tab');
+
+      // Function to show a specific overlay and hide others
+      function showOverlay(overlayToShow) {
+        [cameraGuideOverlay, scanningOverlay, resultOverlay].forEach(overlay => {
+          overlay.style.display = 'none';
+        });
+        if (overlayToShow) {
+          overlayToShow.style.display = 'flex';
+        }
+      }
+
+      // Function to show a specific card and hide others in the control section
+      function showControlCard(cardToShow) {
+        [infoCard, statsCard].forEach(card => {
+          card.style.display = 'none';
+        });
+        if (cardToShow) {
+          cardToShow.style.display = 'block';
+        }
+      }
+
+      // Handle scan button click
+      scanButton.addEventListener('click', () => {
+        showOverlay(scanningOverlay); // Show scanning animation
+        // Simulate a delay for scanning
+        setTimeout(() => {
+          showOverlay(resultOverlay); // Show result after delay
+        }, 3000); // 3 seconds scan time
+      });
+
+      // Handle close result button click
+      closeResultButton.addEventListener('click', () => {
+        showOverlay(cameraGuideOverlay); // Return to camera guide
+      });
+
+      // Handle bottom tab clicks
+      bottomTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          // Remove active class from all tabs
+          bottomTabs.forEach(t => t.classList.remove('active'));
+          // Add active class to the clicked tab
+          tab.classList.add('active');
+
+          const tabName = tab.dataset.tab;
+
+          // Manage overlays based on tab
+          if (tabName === 'scan') {
+            showOverlay(cameraGuideOverlay); // Show camera guide
+            showControlCard(infoCard); // Show info card under scan
+          } else {
+            showOverlay(null); // Hide all camera overlays for other tabs
+          }
+
+          // Manage control section content based on tab
+          if (tabName === 'stats') {
+            showControlCard(statsCard);
+          } else if (tabName === 'guide') {
+            showControlCard(infoCard); // Assuming '指南' shows general info
+          } else if (tabName === 'settings') {
+            showControlCard(null); // Hide cards for settings (or add a settings card later)
+          }
+        });
+      });
+
+      // Initialize: ensure the correct elements are visible on load
+      showOverlay(cameraGuideOverlay);
+      showControlCard(infoCard);
+    });
+  </script>
+</body>
+</html>

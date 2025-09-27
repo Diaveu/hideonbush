@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理者後臺</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        input, button {
+            margin-bottom: 10px;
+            display: block;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 8px;
+            border-bottom: 1px solid #ccc;
+        }
+        .hidden {
+            display: none;
+        }
+        #logout_button {
+            margin-top: 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>管理者後台</h1>
+
+    <!-- 登入區塊 -->
+    <section id="login_section">
+        <h2>管理者登入</h2>
+        <label for="admin_username">帳號：</label>
+        <input type="text" id="admin_username" placeholder="管理者帳號">
+
+        <label for="admin_password">密碼：</label>
+        <input type="password" id="admin_password" placeholder="密碼">
+
+        <button onclick="adminLogin()">登入</button>
+        <p id="admin_message"></p>
+    </section>
+
+    <!-- 後台功能區塊 -->
+    <section id="dashboard_section" class="hidden">
+        <h2>管理者面板</h2>
+        <button id="logout_button" onclick="logout()">登出</button>
+
+        <h3>所有使用者</h3>
+        <button onclick="getUsers()">載入使用者列表</button>
+        <p id="user_loading" class="hidden">載入中...</p>
+        <ul id="user_list"></ul>
+
+        <h3>所有商品</h3>
+        <button onclick="getProducts()">載入商品列表</button>
+        <p id="product_loading" class="hidden">載入中...</p>
+        <ul id="product_list"></ul>
+    </section>
+
+    <script>
+        const API_BASE = 'http://localhost:5000';
+
+        // 初始化時檢查是否已登入
+        window.onload = () => {
+            const token = localStorage.getItem('admin_token');
+            if (token) {
+                showDashboard();
+            } else {
+                showLogin();
+            }
+        };
+
+        // 管理者登入功能
+        async function adminLogin() {
+            try {
+                const username = document.getElementById('admin_username').value;
+                const password = document.getElementById('admin_password').value;
+
+                const response = await fetch(`${API_BASE}/admin/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    localStorage.setItem('admin_token', data.token);
+                    showDashboard();
+                    document.getElementById('admin_message').innerText = '登入成功！';
+                } else {
+                    document.getElementById('admin_message').innerText = data.message || '登入失敗，請檢查帳號與密碼！';
+                }
+            } catch (error) {
+                document.getElementById('admin_message').innerText = '發生錯誤，請稍後再試！';
+                console.error('登入錯誤：', error);
+            }
+        }
+
+        // 登出功能
+        function logout() {
+            localStorage.removeItem('admin_token');
+            showLogin();
+        }
+
+        // 載入使用者列表
+        async function getUsers() {
+            const token = localStorage.getItem('admin_token');
+            const userList = document.getElementById('user_list');
+            const loading = document.getElementById('user_loading');
+
+            userList.innerHTML = '';
+            loading.classList.remove('hidden');
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/users`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('無法取得使用者資料');
+
+                const users = await response.json();
+                users.forEach(user => {
+                    const li = document.createElement('li');
+                    li.textContent = `ID: ${user.id} | 名字: ${user.username} | 點數: ${user.points}`;
+                    userList.appendChild(li);
+                });
+            } catch (error) {
+                userList.innerHTML = '<li>載入使用者失敗！</li>';
+                console.error('載入使用者錯誤：', error);
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        // 載入商品列表
+        async function getProducts() {
+            const token = localStorage.getItem('admin_token');
+            const productList = document.getElementById('product_list');
+            const loading = document.getElementById('product_loading');
+
+            productList.innerHTML = '';
+            loading.classList.remove('hidden');
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/products`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('無法取得商品資料');
+
+                const products = await response.json();
+                products.forEach(product => {
+                    const li = document.createElement('li');
+                    li.textContent = `ID: ${product.id} | 商品: ${product.name} | 所需點數: ${product.points_required}`;
+                    productList.appendChild(li);
+                });
+            } catch (error) {
+                productList.innerHTML = '<li>載入商品失敗！</li>';
+                console.error('載入商品錯誤：', error);
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        // 顯示後台
+        function showDashboard() {
+            document.getElementById('login_section').classList.add('hidden');
+            document.getElementById('dashboard_section').classList.remove('hidden');
+        }
+
+        // 顯示登入頁
+        function showLogin() {
+            document.getElementById('login_section').classList.remove('hidden');
+            document.getElementById('dashboard_section').classList.add('hidden');
+        }
+    </script>
+
+</body>
+</html>

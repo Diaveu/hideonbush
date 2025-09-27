@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>環保回收兌換系統 - 會員主頁</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+  * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #2d3748;
+  line-height: 1.6;
+  background-color: #ffffff;
+  overflow-x: hidden;
+}
+
+/* 導航欄 */
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navbar.scrolled {
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.nav-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  height: 80px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #00695c; /* Changed */
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.02);
+}
+
+.logo-icon {
+      width: clamp(36px, 6vw, 48px);
+      height: clamp(40px, 7vh, 54px);
+      background-image: url('/static/S__3825671.png');
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      /* 移除白底 */
+      background-color: transparent;
+      border-radius: 12px;
+      margin-right: clamp(8px, 2vw, 12px);
+      /* 調整陰影以配合透明背景 */
+      filter: drop-shadow(0 4px 8px rgba(0, 137, 123, 0.2));
+      position: relative;
+      overflow: hidden;
+    }
+
+.logo-icon::before {
+  font-size: 24px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.logo-icon::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+  transform: rotate(45deg);
+  animation: shine 3s ease-in-out infinite;
+}
+
+@keyframes shine {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+  100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #374151;
+  font-weight: 500;
+  position: relative;
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #00897b; /* Changed */
+  background: rgba(0, 137, 123, 0.08); /* Changed */
+  transform: translateY(-1px);
+}
+
+/* 用戶區域 */
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  background: linear-gradient(135deg, #e0f2f1, #b2dfdb); /* Changed */
+  border-radius: 30px;
+  border: 1px solid rgba(0, 137, 123, 0.2); /* Changed */
+  box-shadow: 0 4px 12px rgba(0, 137, 123, 0.15); /* Changed */
+  transition: transform 0.3s ease;
+}
+
+.user-info:hover {
+  transform: translateY(-2px);
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #26a69a, #00897b); /* Changed */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 8px rgba(0, 137, 123, 0.3); /* Changed */
+}
+
+.welcome-text {
+  color: #00695c; /* Changed */
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.points-display {
+  background: linear-gradient(135deg, #fef3c7, #fcd34d);
+  color: #92400e;
+  padding: 0.75rem 1.25rem;
+  border-radius: 25px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.points-display:hover {
+  transform: translateY(-2px);
+}
+
+.logout-btn {
+  background: linear-gradient(135deg, #fee2e2, #fecaca);
+  color: #dc2626;
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  padding: 0.75rem 1.25rem;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+  position: center;
+}
+
+.logout-btn:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.25);
+}
+
+/* 移動端導航按鈕 */
+.mobile-nav-toggle {
+  display: none; /* Hidden by default, shown in media query */
+  flex-direction: column;
+  justify-content: space-around; /* Adjusted for better spacing */
+  width: 30px; /* Slightly larger for easier tap */
+  height: 30px; /* Slightly larger for easier tap */
+  cursor: pointer;
+  padding: 0; /* Padding handled by spacing */
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  z-index: 1001; /* Ensure it's above other nav items if overlapping */
+}
+
+.mobile-nav-toggle:hover {
+  background: rgba(0, 137, 123, 0.1); /* Changed */
+}
+
+.mobile-nav-toggle span {
+  width: 24px;
+  height: 3px;
+  background: #00897b; /* Changed */
+  margin: 2px 0; /* Original margin */
+  transition: all 0.3s ease;
+  border-radius: 2px;
+  display: block; /* Ensure spans are block */
+}
+
+/* Active state for hamburger to X */
+.mobile-nav-toggle.active span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg); /* Adjusted translate for centering */
+}
+
+.mobile-nav-toggle.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.mobile-nav-toggle.active span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg); /* Adjusted translate for centering */
+}
+
+/* Mobile Navigation Menu */
+.mobile-nav-menu {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: 70px; /* Height of navbar on mobile, adjust if navbar height changes */
+  left: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  padding: 0.5rem 0; 
+  z-index: 999; 
+  border-top: 1px solid rgba(226, 232, 240, 0.5);
+}
+
+.mobile-nav-menu.active {
+  display: flex;
+}
+
+.mobile-nav-menu a,
+.mobile-nav-menu .user-info-mobile,
+.mobile-nav-menu .points-display-mobile,
+.mobile-nav-menu .logout-btn-mobile {
+  padding: 0.8rem 1.5rem;
+  color: #374151;
+  text-decoration: none;
+  display: flex; 
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 1px solid #eef2f7;
+}
+
+.mobile-nav-menu a:last-of-type { /* Last nav link before user info */
+    border-bottom: 1px solid #eef2f7;
+}
+.mobile-nav-menu .logout-btn-mobile {
+    border-bottom: none; /* No border for the last item */
+}
+
+
+.mobile-nav-menu a:hover {
+  background-color: rgba(0, 137, 123, 0.08);
+  color: #00897b;
+}
+
+.mobile-nav-menu .logout-btn-mobile {
+  background: transparent;
+  color: #dc2626;
+  border: none;
+  font-weight: 600;
+  /* justify-content: center; /* No, keep alignment with other items */
+  cursor: pointer;
+  width: 100%; /* Make it take full width for consistent padding */
+  text-align: left; /* Align text with other items */
+}
+.mobile-nav-menu .logout-btn-mobile:hover {
+    background-color: rgba(220, 38, 38, 0.1);
+}
+
+.mobile-nav-menu .user-info-mobile .user-avatar {
+  width: 30px;
+  height: 30px;
+  font-size: 0.8rem;
+  /* Re-use .user-avatar styles if applicable or define here */
+  border-radius: 50%;
+  background: linear-gradient(135deg, #26a69a, #00897b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+}
+  .mobile-nav-menu .user-info-mobile .welcome-text{
+      color: #00695c;
+      font-weight: 600;
+  }
+
+.mobile-nav-menu .points-display-mobile {
+    font-weight: 700;
+    color: #92400e;
+}
+
+/* 主視覺區域 */
+.hero {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e0f7fa 0%, #e0f2f1 30%, #b2dfdb 70%, #80cbc4 100%); /* Changed */
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding-top: 80px;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -30%;
+  width: 80%;
+  height: 150%;
+  background: radial-gradient(circle, rgba(0, 137, 123, 0.15) 0%, rgba(0, 137, 123, 0.05) 40%, transparent 70%); /* Changed */
+  animation: float 15s ease-in-out infinite;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -30%;
+  left: -20%;
+  width: 60%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(0, 105, 92, 0.1) 0%, transparent 60%); /* Changed */
+  animation: float 20s ease-in-out infinite reverse;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+  33% { transform: translateY(-20px) rotate(2deg) scale(1.05); }
+  66% { transform: translateY(10px) rotate(-1deg) scale(0.95); }
+}
+
+.hero-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-content h1 {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 800;
+  color: #00695c; /* Changed */
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #00695c, #00897b, #26a69a); /* Changed */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+}
+
+.hero-welcome {
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  color: #00695c; /* Changed */
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hero-welcome::before {
+  content: "👋";
+  font-size: 1.5em;
+  animation: wave 2s ease-in-out infinite;
+}
+
+@keyframes wave {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(20deg); }
+  75% { transform: rotate(-10deg); }
+}
+
+.hero-content p {
+  font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+  color: #4b5563;
+  margin-bottom: 3rem;
+  line-height: 1.8;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem 2.5rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #26a69a, #00897b); /* Changed */
+  color: white;
+  box-shadow: 0 10px 30px rgba(0, 137, 123, 0.4); /* Changed */
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(0, 137, 123, 0.5); /* Changed */
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.9);
+  color: #00897b; /* Changed */
+  border: 2px solid #26a69a; /* Changed */
+  box-shadow: 0 8px 25px rgba(0, 137, 123, 0.2); /* Changed */
+}
+
+.btn-secondary:hover {
+  background: #26a69a; /* Changed */
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(0, 137, 123, 0.4); /* Changed */
+}
+
+.hero-visual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-circle {
+  width: 450px;
+  height: 450px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #26a69a, #00897b, #00695c); /* Changed */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 30px 80px rgba(0, 137, 123, 0.4), /* Changed */
+    0 0 0 20px rgba(0, 137, 123, 0.1), /* Changed */
+    0 0 0 40px rgba(0, 137, 123, 0.05); /* Changed */
+  animation: pulse 4s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-circle::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.1), transparent);
+  animation: rotate 8s linear infinite;
+}
+
+.hero-circle::after {
+  content: '♻️';
+  font-size: 9rem;
+  animation: rotate 12s linear infinite reverse;
+  z-index: 2;
+  position: relative;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 快速數據區域 */
+.stats-section {
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+  padding: 4rem 2rem;
+  border-bottom: 1px solid #e5e7eb;
+  position: relative;
+}
+
+.stats-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #26a69a, transparent); /* Changed */
+}
+
+.stats-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.stat-card {
+  text-align: center;
+  padding: 2.5rem 2rem;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #ffffff, #f8fafc);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #26a69a, #00897b); /* Changed */
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.stat-card:hover::before {
+  transform: scaleX(1);
+}
+
+.stat-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 137, 123, 0.3); /* Changed */
+}
+
+.stat-number {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  color: #00897b; /* Changed */
+  display: block;
+  margin: 1rem 0;
+  background: linear-gradient(135deg, #00897b, #26a69a); /* Changed */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-label {
+  color: #6b7280;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+.stat-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  display: inline-block;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* 特色功能區域 */
+.features {
+  padding: 6rem 2rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 5rem;
+}
+
+.section-header h2 {
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 800;
+  color: #00695c; /* Changed */
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #00695c, #00897b, #26a69a); /* Changed */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section-header p {
+  font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+  color: #6b7280;
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.8;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2.5rem;
+}
+
+.feature-card {
+  background: linear-gradient(135deg, #ffffff, #f9fafb);
+  padding: 3rem 2.5rem;
+  border-radius: 28px;
+  box-shadow: 0 12px 50px rgba(0, 0, 0, 0.08);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(229, 231, 235, 0.6);
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(90deg, #26a69a, #00897b, #00695c); /* Changed */
+  transform: scaleX(0);
+  transition: transform 0.4s ease;
+}
+
+.feature-card:hover::before {
+  transform: scaleX(1);
+}
+
+.feature-card:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.15);
+}
+
+.feature-icon {
+  width: 90px;
+  height: 90px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #e0f2f1, #b2dfdb); /* Changed */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-icon::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(0, 137, 123, 0.1), transparent); /* Changed */
+  transform: rotate(45deg);
+  transition: transform 0.6s ease;
+}
+
+.feature-card:hover .feature-icon::before {
+  transform: rotate(45deg) translate(100%, 100%);
+}
+
+.feature-card:hover .feature-icon {
+  transform: scale(1.15) rotate(5deg);
+  background: linear-gradient(135deg, #b2dfdb, #80cbc4); /* Changed */
+}
+
+.feature-icon svg {
+  width: 45px;
+  height: 45px;
+  stroke: #00897b; /* Changed */
+  stroke-width: 2.5;
+  z-index: 2;
+  position: relative;
+}
+
+.feature-card h3 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #00695c; /* Changed */
+  margin-bottom: 1.5rem;
+  line-height: 1.3;
+}
+
+.feature-card p {
+  color: #6b7280;
+  line-height: 1.8;
+  font-size: 1.1rem;
+}
+
+/* CTA 區域 */
+.cta-section {
+  background: linear-gradient(135deg, #00695c, #004d40, #00897b); /* Changed */
+  padding: 8rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(0, 137, 123, 0.3) 0%, transparent 50%), /* Changed */
+    radial-gradient(circle at 80% 20%, rgba(0, 105, 92, 0.3) 0%, transparent 50%), /* Changed */
+    radial-gradient(circle at 40% 80%, rgba(0, 77, 64, 0.3) 0%, transparent 50%); /* Changed */
+  animation: float 20s ease-in-out infinite;
+}
+
+.cta-content {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.cta-content h2 {
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 800;
+  color: white;
+  margin-bottom: 2rem;
+  line-height: 1.2;
+}
+
+.cta-content p {
+  font-size: clamp(1.2rem, 3vw, 1.4rem);
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 3rem;
+  line-height: 1.8;
+}
+
+.btn-cta {
+  background: linear-gradient(135deg, #ffffff, #f8fafc);
+  color: #00897b; /* Changed */
+  padding: 1.5rem 3.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border-radius: 50px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all 0.4s ease;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-cta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 137, 123, 0.2), transparent); /* Changed */
+  transition: left 0.6s;
+}
+
+.btn-cta:hover::before {
+  left: 100%;
+}
+
+.btn-cta:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.3);
+}
+
+/* 頁腳 */
+.footer {
+  background: linear-gradient(135deg, #1f2937, #111827);
+  color: white;
+  padding: 5rem 2rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #26a69a, transparent); /* Changed */
+}
+
+.footer-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 4rem;
+}
+
+.footer-brand h3 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  color: #26a69a; /* Changed */
+}
+
+.footer-brand p {
+  color: #9ca3af;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+  font-size: 1.05rem;
+}
+
+.footer-section h4 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: white;
+  position: relative;
+}
+
+.footer-section h4::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 30px;
+  height: 3px;
+  background: linear-gradient(90deg, #26a69a, #00897b); /* Changed */
+  border-radius: 2px;
+}
+
+.footer-section ul {
+  list-style: none;
+}
+
+.footer-section li {
+  margin-bottom: 1rem;
+}
+
+.footer-section a {
+  color: #9ca3af;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 1.05rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer-section a:hover {
+  color: #26a69a; /* Changed */
+  transform: translateX(5px);
+}
+
+.footer-bottom {
+  border-top: 1px solid #374151;
+  margin-top: 4rem;
+  padding-top: 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.copyright {
+  color: #9ca3af;
+  font-size: 1rem;
+}
+
+.social-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.social-links a {
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #374151, #4b5563);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  text-decoration: none;
+  transition: all 0.4s ease;
+  font-size: 1.2rem;
+}
+
+.social-links a:hover {
+  background: linear-gradient(135deg, #26a69a, #00897b); /* Changed */
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 137, 123, 0.4); /* Changed */
+}
+
+/* 響應式設計 */
+@media (max-width: 1200px) {
+  .nav-container {
+    padding: 0 1.5rem;
+  }
+
+  .hero-container {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .hero-visual {
+    order: -1;
+    margin-bottom: 2rem;
+  }
+
+  .hero-circle {
+    width: 380px;
+    height: 380px;
+  }
+
+  .hero-circle::after {
+    font-size: 7rem;
+  }
+
+  .hero-content h1 {
+    font-size: clamp(2rem, 6vw, 3.8rem);
+  }
+
+  .hero-welcome {
+    justify-content: center;
+  }
+
+  .hero-content p {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    margin-bottom: 2rem;
+  }
+
+  .hero-buttons {
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .btn {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  .feature-card {
+    padding: 2.5rem 2rem;
+  }
+
+  .feature-icon {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 1.5rem;
+  }
+
+  .feature-icon svg {
+    width: 40px;
+    height: 40px;
+  }
+
+  .feature-card h3 {
+    font-size: 1.5rem;
+  }
+
+  .feature-card p {
+    font-size: 1rem;
+  }
+
+  .cta-content h2 {
+    font-size: clamp(2rem, 6vw, 3rem);
+  }
+
+  .cta-content p {
+    font-size: clamp(1.1rem, 3vw, 1.3rem);
+  }
+
+  .btn-cta {
+    padding: 1.2rem 2.8rem;
+    font-size: 1.1rem;
+  }
+
+  .footer-content {
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .nav-links,
+  .user-section {
+    display: none; /* Hide original nav links and user section */
+  }
+
+  .mobile-nav-toggle {
+    display: flex; /* Show hamburger icon */
+  }
+  
+  .navbar {
+    /* height: 70px; /* Adjust if mobile menu top position depends on this */
+  }
+
+  .nav-container {
+    padding: 0 1rem;
+    height: 70px; /* Explicit height for mobile */
+  }
+
+  .logo {
+    font-size: 1.3rem;
+  }
+
+  .logo-icon {
+    width: 40px;
+    height: 40px; /* Maintain aspect ratio or square */
+    background-size: 32px; /* Adjust icon size */
+    margin-right: 8px;
+  }
+
+
+  .hero {
+    min-height: auto;
+    padding-top: 70px; /* Match navbar height */
+  }
+
+  .hero-container {
+    padding: 1.5rem;
+  }
+
+  .hero-circle {
+    width: 300px;
+    height: 300px;
+    box-shadow:
+      0 20px 60px rgba(0, 137, 123, 0.4), /* Changed */
+      0 0 0 15px rgba(0, 137, 123, 0.1), /* Changed */
+      0 0 0 30px rgba(0, 137, 123, 0.05); /* Changed */
+  }
+
+  .hero-circle::after {
+    font-size: 5rem;
+  }
+
+  .stats-section {
+    padding: 3rem 1rem;
+  }
+
+  .stats-container {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .stat-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .stat-number {
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+  }
+
+  .stat-label {
+    font-size: 0.9rem;
+  }
+
+  .stat-icon {
+    font-size: 2rem;
+  }
+
+  .features {
+    padding: 4rem 1rem;
+  }
+
+  .section-header {
+    margin-bottom: 3rem;
+  }
+
+  .section-header h2 {
+    font-size: clamp(2rem, 6vw, 3rem);
+  }
+
+  .section-header p {
+    font-size: clamp(1rem, 2.5vw, 1.15rem);
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .cta-section {
+    padding: 6rem 1rem;
+  }
+
+  .cta-content h2 {
+    font-size: clamp(1.8rem, 6vw, 2.5rem);
+  }
+
+  .cta-content p {
+    font-size: clamp(1rem, 3vw, 1.2rem);
+  }
+
+  .btn-cta {
+    padding: 1rem 2.5rem;
+    font-size: 1rem;
+  }
+
+  .footer {
+    padding: 4rem 1rem 1.5rem;
+  }
+
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    text-align: center;
+  }
+
+  .footer-brand h3 {
+    font-size: 1.5rem;
+  }
+
+  .footer-brand p {
+    font-size: 0.95rem;
+  }
+
+  .footer-section h4 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .footer-section h4::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .footer-section ul {
+    padding-left: 0;
+  }
+
+  .footer-section li {
+    margin-bottom: 0.8rem;
+  }
+
+  .footer-section a {
+    justify-content: center;
+    font-size: 0.95rem;
+  }
+
+  .footer-bottom {
+    margin-top: 3rem;
+    padding-top: 2rem;
+  }
+
+  .copyright {
+    font-size: 0.9rem;
+  }
+
+  .social-links {
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .social-links a {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-circle {
+    width: 250px;
+    height: 250px;
+  }
+
+  .hero-circle::after {
+    font-size: 4rem;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-buttons {
+    flex-direction: column;
+  }
+
+  .stats-container {
+    padding: 0 0.5rem;
+  }
+
+  .feature-card {
+    padding: 2rem 1.2rem;
+  }
+
+  .cta-section {
+    padding: 4rem 0.5rem;
+  }
+
+  .btn-cta {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .footer {
+    padding: 3rem 0.5rem 1rem;
+  }
+}
+
+/* Fade-in animation (already present in original HTML) */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
+</head>
+<body>
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="#" class="logo">
+        <div class="logo-icon"></div>
+        <n>環保回收兌換系統</n>
+      </a>
+      <div class="nav-links">
+        <a href="/">首頁</a>
+        <a href="/howto-page">如何使用</a>
+        <a href="/about-page">關於我們</a>
+        <a href="/contact-page">聯絡我們</a>
+      </div>
+      <div class="user-section">
+        <div class="user-info">
+          <div class="user-avatar" id="userAvatar">U</div>
+          <span class="welcome-text" id="welcomeText">歡迎回來！</span>
+        </div>
+        <div class="points-display" id="pointsDisplay">
+          ⭐ 0 點數
+        </div>
+        <button class="logout-btn" onclick="logout()">登出</button>
+      </div>
+      <div class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="mobileMenu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+    <div class="mobile-nav-menu" id="mobileMenu">
+      <a href="/">首頁</a>
+      <a href="/howto-page">如何使用</a>
+      <a href="/about-page">關於我們</a>
+      <a href="/contact-page">聯絡我們</a>
+      <div class="user-info-mobile">
+        <div class="user-avatar" id="userAvatarMobile">U</div>
+        <span class="welcome-text" id="welcomeTextMobile">歡迎！</span>
+      </div>
+      <div class="points-display-mobile" id="pointsDisplayMobile">
+        ⭐ 0 點數
+      </div>
+      <button class="logout-btn logout-btn-mobile" onclick="logout()">登出</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-container">
+      <div class="hero-content fade-in">
+        <div class="hero-welcome" id="heroWelcome">歡迎回來，環保達人！</div>
+        <h1>繼續您的環保之旅</h1>
+        <p>您已經是我們環保大家庭的一員！現在就開始回收物品賺取點數，兌換精美的環保商品，讓每一個行動都為地球帶來正面影響。</p>
+        <div class="hero-buttons">
+          <a href="/recycle-page" class="btn btn-primary">🔄 開始回收</a>
+          <a href="/shop-page" class="btn btn-secondary">🛍️ 兌換商城</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-circle"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats-section">
+    <div class="stats-container">
+      <div class="stat-card fade-in">
+        <div class="stat-icon">🌍</div>
+        <span class="stat-number" id="totalRecycled">0</span>
+        <div class="stat-label">累積回收物件</div>
+      </div>
+      <div class="stat-card fade-in">
+        <div class="stat-icon">⭐</div>
+        <span class="stat-number" id="totalPoints">0</span>
+        <div class="stat-label">累積環保點數</div>
+      </div>
+      <div class="stat-card fade-in">
+        <div class="stat-icon">🎁</div>
+        <span class="stat-number" id="itemsExchanged">0</span>
+        <div class="stat-label">已兌換商品</div>
+      </div>
+      <div class="stat-card fade-in">
+        <div class="stat-icon">🏆</div>
+        <span class="stat-number" id="rankLevel">銅級</span>
+        <div class="stat-label">會員等級</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="fade-in">快速功能導覽</h2>
+        <p class="fade-in">輕鬆管理您的環保行動，查看成就並兌換心儀商品</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card fade-in">
+          <div class="feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path>
+              <line x1="12" x2="12" y1="8" y2="16"></line>
+              <line x1="8" x2="16" y1="12" y2="12"></line>
+            </svg>
+          </div>
+          <h3>立即開始回收</h3>
+          <p>前往最近的回收站點，掃描物品QR碼即可立即獲得點數。我們的AI系統會自動識別並計算回收物品的價值。</p>
+        </div>
+        <div class="feature-card fade-in">
+          <div class="feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <h3>瀏覽兌換商城</h3>
+          <p>使用您累積的環保點數，兌換精選的環保生活用品、時尚配件和限量商品，讓環保生活更有樂趣。</p>
+        </div>
+        
+        <div class="feature-card fade-in">
+          <div class="feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+            </svg>
+          </div>
+          <h3>查看個人成就</h3>
+          <p>追蹤您的環保足跡，查看詳細的回收統計、獲得的成就徽章，並與朋友分享您的環保成果。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="cta-content fade-in">
+      <h2>🎯 設定新的環保目標</h2>
+      <p>本月還剩下幾天，現在開始努力達成您的環保目標！每一個小小的行動都能累積成巨大的環境改變。</p>
+      <a href="/goals-page" class="btn-cta">📊 設定我的目標</a>
+    </div>
+  </section>
+  
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <h3>🌱 環保回收兌換系統</h3>
+        <p>透過創新的點數回饋機制與智慧科技應用，鼓勵全民積極參與環保回收行動，共同建立永續發展的美好未來，為下一代留下更潔淨的地球。</p>
+        <p><strong>📧 聯絡我們：</strong> eco@recycling.com</p>
+      </div>
+      
+      <div class="footer-section">
+        <h4>快速連結</h4>
+        <ul>
+          <li><a href="/">🏠 首頁</a></li>
+          <li><a href="/howto-page">📖 如何使用</a></li>
+          <li><a href="#">📍 回收站地點</a></li>
+          <li><a href="#">🛍️ 兌換商城</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4>關於我們</h4>
+        <ul>
+          <li><a href="/about-page">🏢 公司簡介</a></li>
+          <li><a href="/contact-page">📞 聯絡我們</a></li>
+          <li><a href="#">🤝 合作夥伴</a></li>
+          <li><a href="#">📰 最新消息</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4>幫助中心</h4>
+        <ul>
+          <li><a href="/faq-page">❓ 常見問題</a></li>
+          <li><a href="/howto-page">📚 使用指南</a></li>
+          <li><a href="#">🔒 隱私政策</a></li>
+          <li><a href="#">📋 服務條款</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <div class="copyright">© 2025 環保回收兌換系統 版權所有</div>
+      <div class="social-links">
+        <a href="#" title="Facebook">📘</a>
+        <a href="#" title="Instagram">📷</a>
+        <a href="#" title="LinkedIn">💼</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 登出功能
+    function logout() {
+      alert('您已成功登出！將返回首頁。');
+      window.location.href = '/'; // 導向到網站根目錄或登入頁面
+    }
+
+    // 當整個頁面的 HTML 結構都載入完成後，執行此腳本
+    document.addEventListener('DOMContentLoaded', () => {
+
+      // --- 1. 模擬用戶數據 ---
+      const mockUser = {
+        name: '環保員',
+        points: 0,
+        stats: {
+          recycled: 0,
+          exchanged: 0,
+          rank: '銅級'
+        }
+      };
+      
+
+      // --- 2. 動態更新頁面內容 (Navbar and Hero) ---
+      const userAvatar = document.getElementById('userAvatar');
+      const welcomeText = document.getElementById('welcomeText');
+      const pointsDisplay = document.getElementById('pointsDisplay');
+      const heroWelcome = document.getElementById('heroWelcome');
+      
+      if(userAvatar) userAvatar.textContent = mockUser.name.charAt(0);
+      if(welcomeText) welcomeText.textContent = `歡迎，${mockUser.name}！`;
+      if(pointsDisplay) pointsDisplay.innerHTML = `⭐ ${mockUser.points.toLocaleString()} 點數`;
+      if(heroWelcome) heroWelcome.textContent = `歡迎回來，${mockUser.name}！`;
+
+      // --- Update Stats Section ---
+      const totalRecycled = document.getElementById('totalRecycled');
+      const totalPoints = document.getElementById('totalPoints');
+      const itemsExchanged = document.getElementById('itemsExchanged');
+      const rankLevel = document.getElementById('rankLevel');
+
+      if(totalRecycled) totalRecycled.textContent = mockUser.stats.recycled.toLocaleString();
+      if(totalPoints) totalPoints.textContent = mockUser.points.toLocaleString(); // Display total points in stats too
+      if(itemsExchanged) itemsExchanged.textContent = mockUser.stats.exchanged.toLocaleString();
+      if(rankLevel) rankLevel.textContent = mockUser.stats.rank;
+
+      // --- 3. 導航欄滾動特效 ---
+      const navbar = document.getElementById('navbar');
+      if (navbar) {
+        window.addEventListener('scroll', () => {
+          if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+          } else {
+            navbar.classList.remove('scrolled');
+          }
+        });
+      }
+
+      // --- 4. 滾動時的淡入動畫 ---
+      const fadeInElements = document.querySelectorAll('.fade-in');
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            // observer.unobserve(entry.target); // Uncomment to trigger animation only once
+          }
+        });
+      }, {
+        threshold: 0.1 
+      });
+
+      fadeInElements.forEach(el => {
+        observer.observe(el);
+      });
+
+      // --- 5. 行動裝置導覽列互動 ---
+      const mobileNavToggleButton = document.getElementById('mobileNavToggle');
+      const mobileMenuElement = document.getElementById('mobileMenu');
+
+      // Mobile menu user info elements
+      const userAvatarMobile = document.getElementById('userAvatarMobile');
+      const welcomeTextMobile = document.getElementById('welcomeTextMobile');
+      const pointsDisplayMobile = document.getElementById('pointsDisplayMobile');
+
+      if (mobileNavToggleButton && mobileMenuElement) {
+        mobileNavToggleButton.addEventListener('click', () => {
+          mobileNavToggleButton.classList.toggle('active');
+          mobileMenuElement.classList.toggle('active');
+          
+          // Update aria-expanded attribute
+          const isExpanded = mobileNavToggleButton.classList.contains('active');
+          mobileNavToggleButton.setAttribute('aria-expanded', isExpanded);
+
+          // If menu is opened, update user info in mobile menu
+          if (isExpanded) {
+            if(userAvatarMobile) userAvatarMobile.textContent = mockUser.name.charAt(0);
+            if(welcomeTextMobile) welcomeTextMobile.textContent = `歡迎，${mockUser.name}！`;
+            if(pointsDisplayMobile) pointsDisplayMobile.innerHTML = `⭐ ${mockUser.points.toLocaleString()} 點數`;
+          }
+        });
+      }
+    });
+    async function fetchUserData() {
+            const username = document.getElementById('username').value;
+            const userDataDiv = document.getElementById('userData');
+
+            if (!username) {
+                userDataDiv.innerHTML = '<p>請輸入使用者名稱！</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://127.0.0.1:5000/api/users?username=${username}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    userDataDiv.innerHTML = `
+                        <p>id:${data.id}</P>
+                        <p>使用者名稱: ${data.username}</p>
+                        <p>電子郵件: ${data.email}</p>
+                        <p>電話: ${data.phone}</p>
+                        <p>地址: ${data.address || '未提供'}</p>
+                        <p>生日: ${data.birthday || '未提供'}</p>
+                        <p>積分: ${data.points}</p>
+                    `;
+                } else {
+                    userDataDiv.innerHTML = `<p>${data.message}</p>`;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                userDataDiv.innerHTML = '<p>無法獲取使用者資料，請稍後再試。</p>';
+            }
+        }
+  </script>
+</body>
+</html>

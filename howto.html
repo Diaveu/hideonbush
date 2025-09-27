@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>如何使用</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <style>
+    :root {
+      --primary-color: #00897B;
+      --secondary-color: #000000;
+      --background-light: #004D40;
+      --text-color: #00897B;
+      --card-bg: #ffffff;
+      --shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      font-family: 'Roboto', 'Noto Sans TC', sans-serif;
+      background: linear-gradient(135deg, var(--background-light) 0%, #B2DFDB 100%);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    .howto-container {
+      background-color: var(--card-bg);
+      margin-top: 60px;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      max-width: 700px;
+      width: 90%;
+    }
+
+    .howto-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .howto-header h1 {
+      font-size: 2rem;
+      color: var(--primary-color);
+      font-weight: 700;
+    }
+
+    .step {
+      margin-bottom: 25px;
+    }
+
+    .step h2 {
+      font-size: 1.2rem;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+    }
+
+    .step p {
+      font-size: 1rem;
+      color: var(--secondary-color);
+      line-height: 1.6;
+    }
+
+    .home-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: var(--primary-color);
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .logo {
+        position: absolute;
+        top: 10px;
+      left: 10px;
+      width: 85px;  /* 根據需求調整大小 */
+      height: auto;
+    }
+
+    @media (max-width: 600px) {
+      .howto-container {
+        padding: 30px 20px;
+      }
+
+      .howto-header h1 {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Logo -->
+  <img src="/static/S__3825671.png" alt="Logo" class="logo" />
+
+  <!-- 首頁按鈕 -->
+  <button class="home-button" onclick="window.location.href='/'">首頁</button>
+
+  <!-- 使用說明 -->
+  <div class="howto-container">
+    <div class="howto-header">
+      <h1>如何使用本系統</h1>
+    </div>
+
+    <div class="step">
+      <h2>步驟一：註冊帳戶</h2>
+      <p>點選首頁的「立即註冊」，填寫您的基本資料並創建一組帳號密碼，即可開始使用。</p>
+    </div>
+
+    <div class="step">
+      <h2>步驟二：登入系統</h2>
+      <p>完成註冊後，請使用您註冊的帳號密碼登入平台，進入您的專屬會員介面。</p>
+    </div>
+
+    <div class="step">
+      <h2>步驟三：進行回收</h2>
+      <p>將回收物品（如寶特瓶、金屬、紙類等）帶到合作回收站，透過掃描機掃描與稱重。</p>
+    </div>
+
+    <div class="step">
+      <h2>步驟四：獲得點數</h2>
+      <p>系統會自動計算您回收的物品重量與類型，並將相對應的點數累積至您的帳戶中。</p>
+    </div>
+
+    <div class="step">
+      <h2>步驟五：兌換商品</h2>
+      <p>使用累積的點數，在「兌換商城」中選擇喜愛的環保商品進行兌換。</p>
+    </div>
+  </div>
+</body>
+</html>

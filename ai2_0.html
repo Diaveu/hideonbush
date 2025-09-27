@@ -1,0 +1,701 @@
+<!-- 不可用 -->
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>環保物品辨識系統</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', '微軟正黑體', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            color: #2d3748;
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            color: #4a5568;
+            font-size: 1.1em;
+            opacity: 0.8;
+        }
+
+        .api-config {
+            background: linear-gradient(45deg, #fff3cd, #ffeaa7);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 5px solid #f39c12;
+        }
+
+        .api-config h3 {
+            color: #e67e22;
+            margin-bottom: 15px;
+        }
+
+        .api-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .api-select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .upload-area {
+            border: 3px dashed #4299e1;
+            border-radius: 15px;
+            padding: 60px 20px;
+            text-align: center;
+            background: linear-gradient(45deg, #f7fafc, #edf2f7);
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: #3182ce;
+            background: linear-gradient(45deg, #e6fffa, #e6f6ff);
+            transform: translateY(-2px);
+        }
+
+        .upload-area.dragover {
+            border-color: #38a169;
+            background: linear-gradient(45deg, #f0fff4, #e6fffa);
+        }
+
+        .upload-icon {
+            font-size: 4em;
+            color: #4299e1;
+            margin-bottom: 20px;
+        }
+
+        .upload-text {
+            font-size: 1.2em;
+            color: #4a5568;
+            margin-bottom: 15px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #4299e1, #3182ce);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(66, 153, 225, 0.3);
+            margin: 5px;
+        }
+
+        .btn:hover {
+            background: linear-gradient(45deg, #3182ce, #2c5aa0);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(66, 153, 225, 0.4);
+        }
+
+        .btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .preview-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .result-container {
+            background: linear-gradient(45deg, #f7fafc, #edf2f7);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .result-title {
+            font-size: 1.5em;
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+
+        .item-result {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .item-name {
+            font-size: 2em;
+            font-weight: bold;
+            color: #38a169;
+            margin-bottom: 10px;
+        }
+
+        .item-category {
+            font-size: 1.2em;
+            color: #4299e1;
+            margin-bottom: 15px;
+        }
+
+        .recycle-info {
+            background: linear-gradient(45deg, #f0fff4, #e6fffa);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .recycle-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #38a169;
+            margin-bottom: 10px;
+        }
+
+        .recycle-instructions {
+            color: #2d3748;
+            line-height: 1.6;
+        }
+
+        .confidence-bar {
+            background: #e2e8f0;
+            border-radius: 10px;
+            height: 20px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            background: linear-gradient(45deg, #48bb78, #38a169);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #e2e8f0;
+            border-left: 4px solid #4299e1;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .eco-tips {
+            background: linear-gradient(45deg, #fff5f5, #fed7d7);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .eco-tips-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #c53030;
+            margin-bottom: 10px;
+        }
+
+        .error-message {
+            background: linear-gradient(45deg, #fed7d7, #feb2b2);
+            color: #c53030;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 5px solid #e53e3e;
+        }
+
+        .detection-results {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .detection-item {
+            background: #f7fafc;
+            padding: 10px 15px;
+            margin: 5px 0;
+            border-radius: 8px;
+            border-left: 4px solid #4299e1;
+        }
+
+        .detection-item strong {
+            color: #2d3748;
+        }
+
+        .detection-confidence {
+            float: right;
+            color: #718096;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌱 環保物品辨識系統</h1>
+            <p class="subtitle">整合 AI 視覺辨識，精準識別回收分類</p>
+        </div>
+
+        <div class="api-config">
+            <h3>🔧 AI 辨識設定</h3>
+            <select id="apiProvider" class="api-select">
+                <option value="demo">示範模式 (無需 API Key)</option>
+                <option value="google">Google Vision API</option>
+                <option value="azure">Azure Computer Vision</option>
+                <option value="aws">AWS Rekognition</option>
+                <option value="clarifai">Clarifai</option>
+            </select>
+            <input type="password" id="apiKey" class="api-input" placeholder="輸入 API Key (示範模式不需要)" style="display: none;">
+            <p style="font-size: 0.9em; color: #666; margin-top: 5px;">
+                選擇 AI 服務提供商。示範模式使用模擬數據，其他選項需要對應的 API Key。
+            </p>
+        </div>
+
+        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+            <div class="upload-icon">📸</div>
+            <div class="upload-text">點擊或拖拽圖片到這裡</div>
+            <p>支援 JPG, PNG, WEBP 格式，最大 5MB</p>
+            <input type="file" id="fileInput" class="file-input" accept="image/*">
+        </div>
+
+        <div class="preview-container hidden" id="previewContainer">
+            <img id="previewImage" class="preview-image" alt="預覽圖片">
+            <br>
+            <button class="btn" onclick="analyzeImage()" id="analyzeBtn">🔍 開始 AI 辨識</button>
+            <button class="btn" onclick="resetUpload()" style="background: linear-gradient(45deg, #718096, #4a5568);">🔄 重新上傳</button>
+        </div>
+
+        <div class="loading hidden" id="loading">
+            <div class="spinner"></div>
+            <p>AI 正在分析圖片中...</p>
+        </div>
+
+        <div class="result-container hidden" id="resultContainer">
+            <h2 class="result-title">🤖 AI 辨識結果</h2>
+            <div id="resultContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // 環保物品資料庫 (擴展版)
+        const ecoDatabase = {
+            // 塑膠類
+            "塑膠瓶": { category: "塑膠類", recycleCode: "PET (1號)", color: "#4299e1", recycleInstructions: "1. 清洗乾淨，去除標籤\n2. 壓扁減少體積\n3. 投入塑膠回收桶\n4. 可回收製成衣物纖維", ecoTips: "選擇玻璃瓶裝飲料，減少塑膠使用" },
+            "保特瓶": { category: "塑膠類", recycleCode: "PET (1號)", color: "#4299e1", recycleInstructions: "1. 清洗乾淨，去除標籤\n2. 壓扁減少體積\n3. 投入塑膠回收桶\n4. 可回收製成衣物纖維", ecoTips: "選擇玻璃瓶裝飲料，減少塑膠使用" },
+            "塑膠袋": { category: "塑膠類", recycleCode: "PE (2/4號)", color: "#e53e3e", recycleInstructions: "1. 清洗乾淨並晾乾\n2. 送至超商回收點\n3. 不可投入一般回收桶\n4. 製成塑膠木材", ecoTips: "使用環保購物袋，減少塑膠袋使用" },
+            "塑膠容器": { category: "塑膠類", recycleCode: "PP/PE", color: "#4299e1", recycleInstructions: "1. 清洗乾淨\n2. 檢查回收標誌\n3. 依材質分類回收\n4. 可製成新容器", ecoTips: "重複使用容器，延長使用壽命" },
+            
+            // 金屬類
+            "鋁罐": { category: "金屬類", recycleCode: "鋁 (ALU)", color: "#718096", recycleInstructions: "1. 沖洗乾淨\n2. 可壓扁節省空間\n3. 投入金屬回收桶\n4. 100%可回收再利用", ecoTips: "鋁罐是最環保的包裝，回收效益最高" },
+            "易開罐": { category: "金屬類", recycleCode: "鋁 (ALU)", color: "#718096", recycleInstructions: "1. 沖洗乾淨\n2. 可壓扁節省空間\n3. 投入金屬回收桶\n4. 100%可回收再利用", ecoTips: "鋁罐是最環保的包裝，回收效益最高" },
+            "罐頭": { category: "金屬類", recycleCode: "鐵 (FE)", color: "#718096", recycleInstructions: "1. 清洗乾淨\n2. 去除標籤\n3. 投入金屬回收桶\n4. 可製成新的鐵製品", ecoTips: "選擇新鮮食材，減少罐頭使用" },
+            
+            // 玻璃類
+            "玻璃瓶": { category: "玻璃類", recycleCode: "玻璃 (GL)", color: "#38a169", recycleInstructions: "1. 清洗乾淨\n2. 去除瓶蓋和標籤\n3. 依顏色分類投入\n4. 可無限次回收", ecoTips: "玻璃是最環保的包裝材料，建議優先選擇" },
+            "玻璃罐": { category: "玻璃類", recycleCode: "玻璃 (GL)", color: "#38a169", recycleInstructions: "1. 清洗乾淨\n2. 去除瓶蓋和標籤\n3. 依顏色分類投入\n4. 可無限次回收", ecoTips: "重複使用玻璃罐作為儲存容器" },
+            
+            // 紙類
+            "紙盒": { category: "紙類", recycleCode: "紙類 (PAP)", color: "#d69e2e", recycleInstructions: "1. 清洗乾淨，瀝乾\n2. 拆解攤平\n3. 投入紙類回收桶\n4. 可製成再生紙", ecoTips: "選擇FSC認證紙盒，支持永續林業" },
+            "紙杯": { category: "紙類", recycleCode: "複合材質", color: "#e53e3e", recycleInstructions: "1. 檢查是否有塑膠淋膜\n2. 純紙杯可回收\n3. 淋膜紙杯需特殊處理\n4. 投入一般垃圾或專用回收", ecoTips: "自備環保杯，減少紙杯使用" },
+            "報紙": { category: "紙類", recycleCode: "紙類 (PAP)", color: "#d69e2e", recycleInstructions: "1. 保持乾燥\n2. 去除膠帶等雜質\n3. 投入紙類回收桶\n4. 可製成再生紙", ecoTips: "數位閱讀，減少紙張消耗" },
+            "紙板": { category: "紙類", recycleCode: "紙類 (PAP)", color: "#d69e2e", recycleInstructions: "1. 拆解攤平\n2. 去除膠帶和釘書針\n3. 投入紙類回收桶\n4. 可製成新紙板", ecoTips: "重複使用紙箱，延長使用壽命" }
+        };
+
+        // AI 服務配置
+        const apiConfigs = {
+            demo: { name: "示範模式", needsKey: false },
+            google: { name: "Google Vision API", needsKey: true, endpoint: "https://vision.googleapis.com/v1/images:annotate" },
+            azure: { name: "Azure Computer Vision", needsKey: true, endpoint: "https://api.cognitive.microsoft.com/vision/v3.2/analyze" },
+            aws: { name: "AWS Rekognition", needsKey: true },
+            clarifai: { name: "Clarifai", needsKey: true, endpoint: "https://api.clarifai.com/v2/models/aaa03c23b3724a16a56b629203edc62c/outputs" }
+        };
+
+        // 全域變數
+        let currentImageData = null;
+        let selectedProvider = 'demo';
+        
+        // DOM 元素
+        const fileInput = document.getElementById('fileInput');
+        const uploadArea = document.querySelector('.upload-area');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImage = document.getElementById('previewImage');
+        const apiProviderSelect = document.getElementById('apiProvider');
+        const apiKeyInput = document.getElementById('apiKey');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+
+        // 事件監聽器設定
+        function setupEventListeners() {
+            fileInput.addEventListener('change', handleFileSelect);
+            
+            // API 提供商選擇
+            apiProviderSelect.addEventListener('change', function() {
+                selectedProvider = this.value;
+                const config = apiConfigs[selectedProvider];
+                
+                if (config.needsKey) {
+                    apiKeyInput.style.display = 'block';
+                    apiKeyInput.placeholder = `輸入 ${config.name} 的 API Key`;
+                } else {
+                    apiKeyInput.style.display = 'none';
+                }
+            });
+            
+            // 拖拽功能
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFile(files[0]);
+                }
+            });
+        }
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+
+        function handleFile(file) {
+            // 檔案驗證
+            if (!file.type.startsWith('image/')) {
+                showError('請上傳圖片檔案！');
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) { // 5MB 限制
+                showError('檔案大小超過 5MB 限制！');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                currentImageData = e.target.result;
+                previewImage.src = currentImageData;
+                previewContainer.classList.remove('hidden');
+                document.getElementById('resultContainer').classList.add('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetUpload() {
+            fileInput.value = '';
+            currentImageData = null;
+            previewContainer.classList.add('hidden');
+            document.getElementById('resultContainer').classList.add('hidden');
+            document.getElementById('loading').classList.add('hidden');
+        }
+
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.innerHTML = `⚠️ ${message}`;
+            
+            const container = document.querySelector('.container');
+            container.insertBefore(errorDiv, uploadArea);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+
+        // 主要 AI 辨識函數
+        async function analyzeImage() {
+            if (!currentImageData) {
+                showError('請先上傳圖片！');
+                return;
+            }
+
+            if (selectedProvider !== 'demo' && !apiKeyInput.value.trim()) {
+                showError('請輸入 API Key！');
+                return;
+            }
+
+            // 顯示載入狀態
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('resultContainer').classList.add('hidden');
+            analyzeBtn.disabled = true;
+
+            try {
+                let results;
+                
+                if (selectedProvider === 'demo') {
+                    results = await simulateAIRecognition();
+                } else {
+                    results = await callRealAI(selectedProvider, currentImageData, apiKeyInput.value.trim());
+                }
+
+                displayResults(results);
+                document.getElementById('resultContainer').classList.remove('hidden');
+                
+            } catch (error) {
+                console.error('辨識錯誤:', error);
+                showError(`辨識失敗: ${error.message}`);
+            } finally {
+                document.getElementById('loading').classList.add('hidden');
+                analyzeBtn.disabled = false;
+            }
+        }
+
+        // 模擬 AI 辨識 (示範模式)
+        async function simulateAIRecognition() {
+            await new Promise(resolve => setTimeout(resolve, 2000)); // 模擬網路延遲
+            
+            const mockItems = [
+                { label: "塑膠瓶", confidence: 0.95, eco_match: true },
+                { label: "鋁罐", confidence: 0.88, eco_match: true },
+                { label: "玻璃瓶", confidence: 0.91, eco_match: true },
+                { label: "紙盒", confidence: 0.87, eco_match: true },
+                { label: "塑膠袋", confidence: 0.76, eco_match: true }
+            ];
+            
+            // 隨機選擇 1-3 個結果
+            const numResults = Math.floor(Math.random() * 3) + 1;
+            const selectedItems = mockItems.sort(() => 0.5 - Math.random()).slice(0, numResults);
+            
+            return selectedItems.map(item => ({
+                label: item.label,
+                confidence: item.confidence,
+                eco_match: item.eco_match
+            }));
+        }
+
+        // 呼叫真實 AI API
+        async function callRealAI(provider, imageData, apiKey) {
+            const base64Image = imageData.split(',')[1]; // 移除 data:image/xxx;base64, 前綴
+            
+            switch (provider) {
+                case 'google':
+                    return await callGoogleVisionAPI(base64Image, apiKey);
+                case 'azure':
+                    return await callAzureVisionAPI(base64Image, apiKey);
+                case 'clarifai':
+                    return await callClarifaiAPI(base64Image, apiKey);
+                default:
+                    throw new Error('不支援的 AI 提供商');
+            }
+        }
+
+        // Google Vision API
+        async function callGoogleVisionAPI(base64Image, apiKey) {
+            const response = await fetch(`${apiConfigs.google.endpoint}?key=${apiKey}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    requests: [{
+                        image: {
+                            content: base64Image
+                        },
+                        features: [
+                            { type: 'LABEL_DETECTION', maxResults: 10 },
+                            { type: 'OBJECT_LOCALIZATION', maxResults: 10 }
+                        ]
+                    }]
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Google Vision API 錯誤: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const labels = data.responses[0].labelAnnotations || [];
+            const objects = data.responses[0].localizedObjectAnnotations || [];
+            
+            // 合併標籤和物件辨識結果
+            const allDetections = [
+                ...labels.map(label => ({ label: label.description, confidence: label.score })),
+                ...objects.map(obj => ({ label: obj.name, confidence: obj.score }))
+            ];
+
+            return processAIResults(allDetections);
+        }
+
+        // Azure Computer Vision API
+        async function callAzureVisionAPI(base64Image, apiKey) {
+            // 注意：需要設定 Azure endpoint URL
+            const endpoint = apiKeyInput.dataset.endpoint || 'YOUR_AZURE_ENDPOINT';
+            
+            const response = await fetch(`${endpoint}/vision/v3.2/analyze?visualFeatures=Categories,Tags,Objects`, {
+                method: 'POST',
+                headers: {
+                    'Ocp-Apim-Subscription-Key': apiKey,
+                    'Content-Type': 'application/octet-stream'
+                },
+                body: Uint8Array.from(atob(base64Image), c => c.charCodeAt(0))
+            });
+
+            if (!response.ok) {
+                throw new Error(`Azure Vision API 錯誤: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const tags = data.tags || [];
+            const objects = data.objects || [];
+            
+            const allDetections = [
+                ...tags.map(tag => ({ label: tag.name, confidence: tag.confidence })),
+                ...objects.map(obj => ({ label: obj.object, confidence: obj.confidence }))
+            ];
+
+            return processAIResults(allDetections);
+        }
+
+        // Clarifai API
+        async function callClarifaiAPI(base64Image, apiKey) {
+            const response = await fetch(apiConfigs.clarifai.endpoint, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Key ${apiKey}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    inputs: [{
+                        data: {
+                            image: {
+                                base64: base64Image
+                            }
+                        }
+                    }]
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Clarifai API 錯誤: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const concepts = data.outputs[0].data.concepts || [];
+            
+            const allDetections = concepts.map(concept => ({
+                label: concept.name,
+                confidence: concept.value
+            }));
+
+            return processAIResults(allDetections);
+        }
+
+        // 處理 AI 結果，匹配環保物品資料庫
+        function processAIResults(detections) {
+            const ecoItems = [];
+            
+            for (const detection of detections) {
+                const matchedItem = findEcoMatch(detection.label);
+                if (matchedItem) {
+                    ecoItems.push({
+                        label: matchedItem,
+                        confidence: detection.confidence,
+                        eco_match: true,
+                        original_label: detection.label
+                    });
+                }
+            }
+            
+            // 如果沒有匹配到環保物品，返回原始結果
+            if (ecoItems.length === 0) {
+                return detections.slice(0, 3).map(item => ({
+                    ...item,
+                    eco_match: false
+                }));
+            }
+            
+            // 按信心度排序，返回前 3 個結果
+            return ecoItems.sort((a, b) => b.confidence - a.confidence).slice(0, 3);
+        }
+
+        // 找到匹配的環保物品
+        function findEcoMatch(label) {
+            const lowerLabel = label.toLowerCase();
+            
+            // 直接匹配
+            for (const item in ecoDatabase) {
+                if (item === label || item.toLowerCase() === lowerLabel) {
+                    return item;
+                }
+            }
+            
+            // 關鍵字匹配
+            const keywordMatches = {
+                'bottle': '塑膠瓶',
+                'plastic': '塑膠容器',
+                'can': '鋁',
+                

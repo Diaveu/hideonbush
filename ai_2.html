@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GreenScan: 智慧回收社群</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* CSS Variables */
+    :root {
+      --brand-green: #4CAF50; /* A brighter, more vibrant green */
+      --brand-dark-green: #388E3C;
+      --brand-light-green: #E8F5E9;
+      --text-primary: #212121;
+      --text-secondary: #757575;
+      --bg-light: #F8F8F8;
+      --bg-white: #FFFFFF;
+      --border-color: #E0E0E0;
+      --shadow-color: rgba(0, 0, 0, 0.08);
+      --highlight-color: #FFC107; /* For points/rewards */
+    }
+
+    /* Global Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+    
+    .app-container {
+      max-width: 414px; /* iPhone 8 Plus / XR width */
+      height: 100vh;
+      margin: 0 auto;
+      background-color: var(--bg-white);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 20px var(--shadow-color);
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Header */
+    .app-header {
+      background: linear-gradient(135deg, var(--brand-green), var(--brand-dark-green));
+      color: white;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      flex-shrink: 0;
+    }
+    
+    .app-title {
+      font-size: 22px;
+      font-weight: 500;
+    }
+    
+    .header-icon-button {
+      background: none;
+      border: none;
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    
+    .header-icon-button:hover {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+    
+    /* Main Content Area */
+    .main-content {
+      flex-grow: 1; /* Allows content to fill available space */
+      display: flex;
+      flex-direction: column;
+      position: relative; /* For overlays */
+      overflow: hidden;
+    }
+
+    /* Camera View */
+    .camera-view {
+      width: 100%;
+      aspect-ratio: 1;
+      background-color: #000;
+      position: relative;
+      overflow: hidden;
+      display: flex; /* For centering overlay content */
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .camera-feed {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.8); /* Slightly darken for overlay readability */
+    }
+    
+    .camera-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    
+    /* Scan Guidance */
+    .scan-guidance {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .scan-guidance-icon {
+      width: 60px;
+      height: 60px;
+      border: 3px solid rgba(255, 255, 255, 0.7);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 10px;
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+    
+    .scan-guidance-text {
+      font-size: 18px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Scanning Animation */
+    .scanning-box {
+      width: 220px;
+      height: 220px;
+      border: 4px dashed rgba(255, 255, 255, 0.7);
+      border-radius: 20px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .scanning-line {
+      position: absolute;
+      width: 80%;
+      height: 5px;
+      background: linear-gradient(90deg, transparent, var(--highlight-color), transparent);
+      animation: scan-line 2s linear infinite;
+      box-shadow: 0 0 10px var(--highlight-color);
+    }
+    
+    @keyframes scan-line {
+      0% { top: 10%; opacity: 0; }
+      20% { top: 10%; opacity: 1; }
+      80% { top: 90%; opacity: 1; }
+      100% { top: 90%; opacity: 0; }
+    }
+    
+    .scanning-text {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--highlight-color);
+      text-shadow: 0 0 5px rgba(0,0,0,0.5);
+    }
+
+    /* Result Card */
+    .result-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.75);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 5;
+    }
+    
+    .result-card {
+      background-color: var(--bg-white);
+      width: 90%;
+      max-width: 360px;
+      border-radius: 18px;
+      padding: 28px 24px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+      text-align: center;
+      animation: fadeInScale 0.3s ease-out;
+    }
+
+    @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    
+    .result-icon-large {
+      width: 64px;
+      height: 64px;
+      color: var(--brand-green);
+      margin-bottom: 15px;
+    }
+
+    .result-category-label {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--brand-dark-green);
+      margin-bottom: 8px;
+    }
+    
+    .result-status {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--brand-green);
+      background-color: var(--brand-light-green);
+      padding: 6px 15px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+    
+    .result-tip {
+      font-size: 15px;
+      color: var(--text-primary);
+      margin-bottom: 25px;
+      background-color: #F0F4C3; /* Light yellow for tips */
+      padding: 12px;
+      border-radius: 10px;
+      border-left: 5px solid var(--highlight-color);
+      text-align: left;
+    }
+    
+    .result-points {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--highlight-color);
+      margin-bottom: 20px;
+    }
+    
+    .result-action-button {
+      background-color: var(--brand-green);
+      color: white;
+      border: none;
+      padding: 14px;
+      width: 100%;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+    
+    .result-action-button:hover {
+      background-color: var(--brand-dark-green);
+      transform: translateY(-1px);
+    }
+
+    /* Scan Button Below Camera */
+    .scan-control-area {
+      flex-shrink: 0;
+      padding: 20px 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: var(--bg-white);
+      border-top: 1px solid var(--border-color);
+      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.03);
+    }
+    
+    .capture-button {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand-green), var(--brand-dark-green));
+      border: 4px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .capture-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Stats & Community Section (initially hidden) */
+    .community-section {
+      padding: 20px 16px;
+      overflow-y: auto;
+      flex-grow: 1;
+      display: none; /* Hidden by default */
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--brand-dark-green);
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .stats-summary-card {
+      background-color: var(--brand-light-green);
+      border-radius: 12px;
+      padding: 18px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-item {
+      text-align: center;
+      flex: 1;
+    }
+
+    .stat-item:not(:last-child) {
+      border-right: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--brand-dark-green);
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .leaderboard-card {
+      background-color: var(--bg-white);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .leaderboard-list {
+      list-style: none;
+    }
+
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .leaderboard-item:last-child {
+      border-bottom: none;
+    }
+
+    .rank {
+      font-weight: 700;
+      width: 30px;
+      color: var(--brand-dark-green);
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #f0f0f0;
+      margin-right: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 14px;
+      color: var(--text-secondary);
+      overflow: hidden; /* For actual images */
+    }
+
+    .leaderboard-name {
+      flex-grow: 1;
+      font-weight: 500;
+    }
+
+    .leaderboard-points {
+      font-weight: 700;
+      color: var(--highlight-color);
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: space-around;
+      background-color: var(--bg-white);
+      border-top: 1px solid var(--border-color);
+      height: 65px;
+      box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: var(--text-secondary);
+      transition: color 0.2s ease, transform 0.1s ease;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+      padding-top: 5px;
+    }
+    
+    .nav-item.active {
+      color: var(--brand-green);
+      transform: translateY(-2px);
+    }
+    
+    .nav-icon {
+      width: 26px;
+      height: 26px;
+      margin-bottom: 4px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <h1 class="app-title">GAIABLOOM</h1>
+      <button class="header-icon-button" aria-label="Notifications">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bell">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+      </button>
+    </header>
+    
+    <main class="main-content">
+      <div class="camera-view">
+        <img src="https://via.placeholder.com/414x414?text=Live+Camera+Feed" alt="Camera Feed" class="camera-feed">
+        
+        <div class="camera-overlay" id="scanGuidanceOverlay">
+          <div class="scan-guidance">
+            <div class="scan-guidance-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-camera">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+              </svg>
+            </div>
+            <p class="scan-guidance-text">請將回收物置於框線內</p>
+          </div>
+        </div>
+        
+        <div class="camera-overlay" id="scanningOverlay" style="display: none;">
+          <div class="scanning-box">
+            <div class="scanning-line"></div>
+            <span class="scanning-text">辨識中...</span>
+          </div>
+        </div>
+        
+        <div class="result-overlay" id="resultOverlay" style="display: none;">
+          <div class="result-card">
+            <svg class="result-icon-large" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-recycle">
+              <path d="M12 1L3 8v8l9 7 9-7V8l-9-7z"></path>
+              <polyline points="16 10 12 14 8 10"></polyline>
+            </svg>
+            <h2 class="result-category-label">塑膠瓶 (PET)</h2>
+            <span class="result-status">可回收</span>
+            <p class="result-tip">
+              **回收小提示:** 請清空瓶內液體，並將瓶蓋與瓶身分開回收。標籤若能撕除，請一併移除。
+            </p>
+            <p class="result-points">獲得 +20 綠點！</p>
+            <button class="result-action-button">繼續掃描</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="scan-control-area">
+        <button class="capture-button" aria-label="Capture item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-zap">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+        </button>
+      </div>
+
+      <section class="community-section" id="communitySection">
+        <h2 class="section-title">您的環保足跡</h2>
+        <div class="stats-summary-card">
+          <div class="stat-item">
+            <div class="stat-value">327</div>
+            <div class="stat-label">總回收物</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">45.2kg</div>
+            <div class="stat-label">減少塑膠</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">158.6kg</div>
+            <div class="stat-label">碳排放</div>
+          </div>
+        </div>
+
+        <h2 class="section-title">社群排行榜</h2>
+        <div class="leaderboard-card">
+          <ul class="leaderboard-list">
+            <li class="leaderboard-item">
+              <span class="rank">1.</span>
+              <div class="avatar">圖</div>
+              <span class="leaderboard-name">小明</span>
+              <span class="leaderboard-points">9850 點</span>
+            </li>
+            <li class="leaderboard-item">
+              <span class="rank">2.</span>
+              <div class="avatar">圖</div>
+              <span class="leaderboard-name">環保志工陳</span>
+              <span class="leaderboard-points">8720 點</span>
+            </li>
+            <li class="leaderboard-item">
+              <span class="rank">3.</span>
+              <div class="avatar">圖</div>
+              <span class="leaderboard-name">綠色生活家</span>
+              <span class="leaderboard-points">7530 點</span>
+            </li>
+            <li class="leaderboard-item">
+              <span class="rank">4.</span>
+              <div class="avatar">您</div>
+              <span class="leaderboard-name">您</span>
+              <span class="leaderboard-points">245 點</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
+    
+    <nav class="bottom-nav">
+      <div class="nav-item active" data-tab="scan">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-camera nav-icon">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+          <circle cx="12" cy="13" r="4"></circle>
+        </svg>
+        <span>掃描</span>
+      </div>
+      <div class="nav-item" data-tab="community">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users nav-icon">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        <span>社群</span>
+      </div>
+      <div class="nav-item" data-tab="profile">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user nav-icon">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        <span>我的</span>
+      </div>
+    </nav>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const captureButton = document.querySelector('.capture-button');
+      const resultActionButton = document.querySelector('.result-action-button');
+      
+      const scanGuidanceOverlay = document.getElementById('scanGuidanceOverlay');
+      const scanningOverlay = document.getElementById('scanningOverlay');
+      const resultOverlay = document.getElementById('resultOverlay');
+      const communitySection = document.getElementById('communitySection');
+      const mainContent = document.querySelector('.main-content'); // To switch display
+
+      const navItems = document.querySelectorAll('.bottom-nav .nav-item');
+
+      // Function to manage overlays in the camera view
+      function showCameraOverlay(overlayToShow) {
+        [scanGuidanceOverlay, scanningOverlay, resultOverlay].forEach(overlay => {
+          overlay.style.display = 'none';
+        });
+        if (overlayToShow) {
+          overlayToShow.style.display = 'flex';
+        }
+      }
+
+      // Function to toggle between camera view and other sections
+      function showMainSection(sectionName) {
+        if (sectionName === 'scan') {
+          mainContent.style.overflowY = 'hidden'; /* No scrolling for camera view */
+          document.querySelector('.camera-view').style.display = 'flex';
+          communitySection.style.display = 'none';
+          showCameraOverlay(scanGuidanceOverlay); // Ensure camera guidance is shown
+        } else if (sectionName === 'community') {
+          mainContent.style.overflowY = 'auto'; /* Enable scrolling for community */
+          document.querySelector('.camera-view').style.display = 'none';
+          communitySection.style.display = 'flex';
+          showCameraOverlay(null); // Hide all camera overlays
+        } else if (sectionName === 'profile') {
+          // Placeholder for profile section
+          mainContent.style.overflowY = 'auto';
+          document.querySelector('.camera-view').style.display = 'none';
+          communitySection.style.display = 'none'; // Hide community
+          showCameraOverlay(null);
+          // Potentially show a "My Profile" card here
+        }
+      }
+
+      // Event Listener for Capture Button
+      captureButton.addEventListener('click', () => {
+        showCameraOverlay(scanningOverlay); // Show scanning animation
+        setTimeout(() => {
+          showCameraOverlay(resultOverlay); // Show result after a delay
+        }, 2500); // Simulate 2.5 seconds scanning time
+      });
+
+      // Event Listener for Result Action Button (e.g., "Continue Scan")
+      resultActionButton.addEventListener('click', () => {
+        showCameraOverlay(scanGuidanceOverlay); // Go back to scan guidance
+      });
+
+      // Event Listeners for Bottom Navigation
+      navItems.forEach(item => {
+        item.addEventListener('click', () => {
+          navItems.forEach(nav => nav.classList.remove('active'));
+          item.classList.add('active');
+          const tab = item.dataset.tab;
+          showMainSection(tab);
+        });
+      });
+
+      // Initialize the app state
+      showMainSection('scan'); // Start with the scan view
+    });
+  </script>
+</body>
+</html>

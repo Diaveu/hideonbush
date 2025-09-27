@@ -1,0 +1,1068 @@
+<!-- 不要動 -->
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>環保回收兌換系統 - 會員主頁</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      color: #333;
+      margin: 0;
+      background-color: #f9f9f9;
+      overflow-x: hidden;
+    }
+    
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 5%;
+      position: fixed;
+      width: 100%;
+      z-index: 1000;
+      background-color: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .logo {
+      font-weight: 700;
+      font-size: 24px;
+      color: #1a5653;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+    
+    .nav-links a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-links a:hover {
+      color: #1a5653;
+    }
+    
+    .user-profile {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      position: relative;
+    }
+    
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #2c7a7b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      margin-right: 10px;
+    }
+    
+    .user-name {
+      font-weight: 500;
+    }
+    
+    .dropdown-icon {
+      margin-left: 5px;
+    }
+    
+    .dashboard {
+      padding-top: 100px;
+      min-height: 100vh;
+      background-color: #f0f7f6;
+    }
+    
+    .dashboard-container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 30px 0;
+    }
+    
+    .welcome-section {
+      background-color: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .welcome-text h1 {
+      font-size: 2rem;
+      color: #1a5653;
+      margin-bottom: 10px;
+    }
+    
+    .welcome-text p {
+      color: #666;
+      font-size: 1.1rem;
+    }
+    
+    .quick-actions {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .button {
+      display: inline-block;
+      background-color: #2c7a7b;
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(44, 122, 123, 0.2);
+    }
+    
+    .button:hover {
+      background-color: #1a5653;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(44, 122, 123, 0.3);
+    }
+    
+    .button.secondary {
+      background-color: transparent;
+      border: 2px solid #2c7a7b;
+      color: #2c7a7b;
+    }
+    
+    .button.secondary:hover {
+      background-color: rgba(44, 122, 123, 0.1);
+    }
+    
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 30px;
+    }
+    
+    .dashboard-card {
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+      padding: 25px;
+      margin-bottom: 30px;
+    }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .card-header h2 {
+      color: #1a5653;
+      font-size: 1.5rem;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    
+    .stat-card {
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #2c7a7b;
+      margin-bottom: 5px;
+    }
+    
+    .stat-label {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    .chart-container {
+      height: 300px;
+      position: relative;
+    }
+    
+    .chart-placeholder {
+      width: 100%;
+      height: 100%;
+      background-color: #f0f7f6;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #888;
+    }
+    
+    .activity-list {
+      list-style: none;
+    }
+    
+    .activity-item {
+      padding: 15px 0;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+    }
+    
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+    
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      background-color: rgba(44, 122, 123, 0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+    }
+    
+    .activity-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: #2c7a7b;
+    }
+    
+    .activity-content {
+      flex: 1;
+    }
+    
+    .activity-title {
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+    
+    .activity-date {
+      font-size: 0.8rem;
+      color: #888;
+    }
+    
+    .activity-points {
+      font-weight: 700;
+      color: #2c7a7b;
+    }
+    
+    .points-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+    }
+    
+    .points-circle {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background-color: #f0f7f6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      border: 6px solid #2c7a7b;
+    }
+    
+    .points-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #2c7a7b;
+    }
+    
+    .points-label {
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    .reward-item {
+      display: flex;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .reward-item:last-child {
+      border-bottom: none;
+    }
+    
+    .reward-image {
+      width: 60px;
+      height: 60px;
+      background-color: #f0f7f6;
+      border-radius: 10px;
+      margin-right: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .reward-image svg {
+      width: 30px;
+      height: 30px;
+      stroke: #2c7a7b;
+    }
+    
+    .reward-content {
+      flex: 1;
+    }
+    
+    .reward-title {
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+    
+    .reward-points {
+      font-size: 0.9rem;
+      color: #2c7a7b;
+      font-weight: 600;
+    }
+    
+    .see-all {
+      color: #2c7a7b;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+    
+    .see-all svg {
+      width: 16px;
+      height: 16px;
+      margin-left: 5px;
+    }
+    
+    .achievement-progress {
+      width: 100%;
+      height: 10px;
+      background-color: #e9e9e9;
+      border-radius: 5px;
+      margin-top: 10px;
+      overflow: hidden;
+    }
+    
+    .progress-bar {
+      height: 100%;
+      background-color: #2c7a7b;
+      border-radius: 5px;
+    }
+    
+    .footer {
+      background-color: #1a5653;
+      color: white;
+      padding: 60px 5% 40px;
+    }
+    
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    
+    .footer-logo {
+      margin-bottom: 15px;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+    
+    .footer-info {
+      flex: 1;
+      min-width: 250px;
+      margin-bottom: 30px;
+    }
+    
+    .footer-info p {
+      margin-bottom: 15px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+    }
+    
+    .footer-links-column {
+      min-width: 160px;
+    }
+    
+    .footer-links-column h3 {
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+    }
+    
+    .footer-links-column ul {
+      list-style: none;
+    }
+    
+    .footer-links-column li {
+      margin-bottom: 10px;
+    }
+    
+    .footer-links-column a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    
+    .footer-links-column a:hover {
+      color: white;
+    }
+    
+    .footer-bottom {
+      margin-top: 60px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.9rem;
+    }
+    
+    .social-links {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .social-links a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+    }
+    
+    @media (max-width: 992px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .welcome-section {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .welcome-text {
+        margin-bottom: 20px;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 15px 5%;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .footer-content {
+        flex-direction: column;
+      }
+      
+      .footer-info {
+        margin-bottom: 40px;
+      }
+      
+      .footer-bottom {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+      }
+      
+      .social-links {
+        justify-content: center;
+      }
+      
+    }
+    *{
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      color: #333;
+      margin: 0;
+      background-color: #f9f9f9;
+      overflow-x: hidden;
+      min-height: 100vh;
+      padding-top: 80px;
+    }
+    
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 5%;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      background-color: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .logo {
+      font-weight: 700;
+      font-size: 24px;
+      color: #1a5653;
+      text-decoration: none;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+    
+    .nav-links a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-links a:hover {
+      color: #1a5653;
+    }
+    
+    .user-profile {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      position: relative;
+    }
+    
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #2c7a7b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      margin-right: 10px;
+    }
+    
+    .user-name {
+      font-weight: 500;
+    }
+    
+    .dropdown-icon {
+      margin-left: 5px;
+      transition: transform 0.3s ease;
+    }
+    
+    /* 下拉選單樣式 */
+    .dropdown-menu {
+      position: absolute;
+      top: 50px;
+      right: 0;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      width: 200px;
+      z-index: 1001;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(-10px);
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .dropdown-menu.active {
+      opacity: 1;
+      transform: translateY(0);
+      visibility: visible;
+    }
+    
+    .dropdown-menu ul {
+      list-style: none;
+    }
+    
+    .dropdown-menu li {
+      border-bottom: 1px solid #f2f2f2;
+    }
+    
+    .dropdown-menu li:last-child {
+      border-bottom: none;
+    }
+    
+    .dropdown-menu a {
+      display: flex;
+      align-items: center;
+      padding: 15px 20px;
+      color: #333;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    
+    .dropdown-menu a:hover {
+      background-color: #f9f9f9;
+      color: #2c7a7b;
+    }
+    
+    .dropdown-menu svg {
+      width: 18px;
+      height: 18px;
+      margin-right: 10px;
+      stroke: #666;
+    }
+    
+    .dropdown-menu a:hover svg {
+      stroke: #2c7a7b;
+    }
+    
+    .logout-button {
+      color: #e53e3e !important;
+    }
+    
+    .logout-button svg {
+      stroke: #e53e3e;
+    }
+    
+    .content {
+      padding: 20px 5%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .content h1 {
+      margin-bottom: 20px;
+      color: #1a5653;
+    }
+    
+    .content p {
+      line-height: 1.6;
+      color: #666;
+    }
+    
+    /* 添加遮罩層，點擊空白處關閉選單 */
+    .dropdown-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1000;
+      display: none;
+    }
+    
+    .dropdown-backdrop.active {
+      display: block;
+    }
+    
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 15px 5%;
+      }
+      
+      .dropdown-menu {
+        width: 180px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <a href="#" class="logo">環保回收兌換系統</a>
+    <div class="nav-links">
+      <a href="/dashboard">首頁</a>
+      <a href="#">回收紀錄</a>
+      <a href="#">兌換商城</a>
+      <a href="#">成就徽章</a>
+      <div class="user-profile">
+        <div class="user-avatar">wei</div>
+        <span class="user-name">bbyw</span>
+        <span class="dropdown-icon">▼</span>
+      </div>
+    </div>
+  </header>
+    
+  <!-- 點擊空白處關閉選單的遮罩層 -->
+  <div class="dropdown-backdrop" id="dropdownBackdrop"></div>
+  
+  <div class="content">
+    <h1>歡迎回來，bbyw</h1>
+    <p>請點擊右上角的頭像以測試下拉選單功能。您可以查看個人資料、帳號設定、收藏項目、幫助中心或登出系統。</p>
+  </div>
+  <div class="dropdown-menu" id="dropdownMenu">
+    <ul>
+      <li>
+        <a href="/profile-page">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          個人資料
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20h9"></path>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+          </svg>
+          帳號設定
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+          </svg>
+          我的收藏
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          幫助中心
+        </a>
+      </li>
+      <li>
+        <a href="index.html" class="logout-button">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          登出
+        </a>
+      </li>
+    </ul>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const userProfile = document.getElementById('userProfile');
+      const dropdownMenu = document.getElementById('dropdownMenu');
+      const dropdownBackdrop = document.getElementById('dropdownBackdrop');
+      const dropdownIcon = document.querySelector('.dropdown-icon');
+      
+      // 點擊頭像顯示/隱藏下拉選單
+      userProfile.addEventListener('click', function(e) {
+        e.stopPropagation();
+        dropdownMenu.classList.toggle('active');
+        dropdownBackdrop.classList.toggle('active');
+        
+        // 旋轉箭頭圖示
+        if (dropdownMenu.classList.contains('active')) {
+          dropdownIcon.style.transform = 'rotate(180deg)';
+        } else {
+          dropdownIcon.style.transform = 'rotate(0)';
+        }
+      });
+      
+      // 點擊空白處關閉選單
+      dropdownBackdrop.addEventListener('click', function() {
+        dropdownMenu.classList.remove('active');
+        dropdownBackdrop.classList.remove('active');
+        dropdownIcon.style.transform = 'rotate(0)';
+      });
+      
+      // 防止在選單內的點擊事件傳播到背景
+      dropdownMenu.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+    });
+  </script>
+
+      <div class="dashboard-grid">
+        <div class="main-content">
+          <section class="dashboard-card">
+            <div class="card-header">
+              <h2>回收統計</h2>
+              <a href="#" class="see-all">
+                查看詳情
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </a>
+            </div>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-value">75</div>
+                <div class="stat-label">總回收次數</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">132</div>
+                <div class="stat-label">累計回收(公斤)</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">25</div>
+                <div class="stat-label">減少碳排放(公斤)</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="dashboard-card">
+            <div class="card-header">
+              <h2>回收趨勢</h2>
+              <select>
+                <option>最近一週</option>
+                <option>最近一個月</option>
+                <option>最近三個月</option>
+              </select>
+            </div>
+            <div class="chart-container">
+              <div class="chart-placeholder">
+                此處顯示回收數據趨勢圖表
+              </div>
+            </div>
+          </section>
+
+          <section class="dashboard-card">
+            <div class="card-header">
+              <h2>最近活動</h2>
+              <a href="#" class="see-all">
+                查看全部
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </a>
+            </div>
+            <ul class="activity-list">
+              <li class="activity-item">
+                <div class="activity-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                  </svg>
+                </div>
+                <div class="activity-content">
+                  <div class="activity-title">回收塑膠瓶</div>
+                  <div class="activity-date">2025/04/18 15:30</div>
+                </div>
+                <div class="activity-points">+15 點</div>
+              </li>
+              <li class="activity-item">
+                <div class="activity-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                  </svg>
+                </div>
+                <div class="activity-content">
+                  <div class="activity-title">兌換環保餐具組</div>
+                  <div class="activity-date">2025/04/15 09:45</div>
+                </div>
+                <div class="activity-points">-200 點</div>
+              </li>
+              <li class="activity-item">
+                <div class="activity-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                  </svg>
+                </div>
+                <div class="activity-content">
+                  <div class="activity-title">回收紙類</div>
+                  <div class="activity-date">2025/04/12 14:20</div>
+                </div>
+                <div class="activity-points">+30 點</div>
+              </li>
+              <li class="activity-item">
+                <div class="activity-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                  </svg>
+                </div>
+                <div class="activity-content">
+                  <div class="activity-title">回收金屬罐</div>
+                  <div class="activity-date">2025/04/10 11:15</div>
+                </div>
+                <div class="activity-points">+25 點</div>
+              </li>
+            </ul>
+          </section>
+        </div>
+
+        <div class="sidebar">
+          <section class="dashboard-card points-card">
+            <div class="points-circle">
+              <div class="points-value">520</div>
+              <div class="points-label">環保點數</div>
+            </div>
+            <a href="#" class="button">查看兌換商城</a>
+          </section>
+
+          <section class="dashboard-card">
+            <div class="card-header">
+              <h2>熱門獎勵</h2>
+              <a href="#" class="see-all">
+                查看全部
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </a>
+            </div>
+            <div class="reward-list">
+              <div class="reward-item">
+                <div class="reward-image">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
+                    <path d="M3 6h18"></path>
+                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                  </svg>
+                </div>
+                <div class="reward-content">
+                  <div class="reward-title">可摺疊環保購物袋</div>
+                  <div class="reward-points">200 點</div>
+                </div>
+              </div>
+              <div class="reward-item">
+                <div class="reward-image">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 8h1a4 4 0 1 1 0 8h-1"></path>
+                    <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"></path>
+                  </svg>
+                </div>
+                <div class="reward-content">
+                  <div class="reward-title">不鏽鋼保溫杯</div>
+                  <div class="reward-points">350 點</div>
+                </div>
+              </div>
+              <div class="reward-item">
+                <div class="reward-image">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="20" height="14" x="2" y="5" rx="2"></rect>
+                    <line x1="2" x2="22" y1="10" y2="10"></line>
+                  </svg>
+                </div>
+                <div class="reward-content">
+                  <div class="reward-title">咖啡廳折價券</div>
+                  <div class="reward-points">100 點</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="dashboard-card">
+            <div class="card-header">
+              <h2>下一個成就</h2>
+            </div>
+            <div class="activity-item" style="padding-top: 0;">
+              <div class="activity-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="8" r="7"></circle>
+                  <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                </svg>
+              </div>
+              <div class="activity-content">
+                <div class="activity-title">回收達人</div>
+                <div class="activity-date">累計回收達150公斤</div>
+                <div class="achievement-progress">
+                  <div class="progress-bar" style="width: 88%;"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-info">
+        <div class="footer-logo">環保回收兌換系統</div>
+        <p>透過創新的點數回饋機制，鼓勵全民參與環保回收行動，<P>共同建立永續發展的美好未來。</P></p>
+        <p>聯絡我們：bbyw@recycling.com</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-links-column">
+          <h3>快速連結</h3>
+          <ul>
+            <li><a href="/">首頁</a></li>
+            <li><a href="/howto-page">如何使用</a></li>
+            <li><a href="#">回收站地點</a></li>
+            <li><a href="#">兌換商城</a></li>
+          </ul>
+        </div>
+        <div class="footer-links-column">
+          <h3>關於我們</h3>
+          <ul>
+            <li><a href="/about-page">公司簡介</a></li>
+            <li><a href="/contact-page">聯絡我們</a></li>
+            <li><a href="#">合作夥伴</a></li>
+            <li><a href="#">最新消息</a></li>
+          </ul>
+        </div>
+        <div class="footer-links-column">
+          <h3>幫助中心</h3>
+          <ul>
+            <li><a href="/faq-page">常見問題</a></li>
+            <li><a href="/howto-page">使用指南</a></li>
+            <li><a href="#">隱私政策</a></li>
+            <li><a href="#">服務條款</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="copyright">環保回收兌換系統 © 2025 版權所有</div>
+      <div class="social-links">
+        <a href="https://Facebook.com">Facebook</a>
+        <a href="https://Instagram.com">Instagram</a>
+        <a href="https://LinkedIn.com">LinkedIn</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // 滾動時改變導航欄樣式
+      window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.navbar');
+        if (window.scrollY > 50) {
+          navbar.style.boxShadow = '0 2px 15px rgba(0, 0, 0, 0.1)';
+          navbar.style.padding = '15px 5%';
+        } else {
+          navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+          navbar.style.padding = '20px 5%';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

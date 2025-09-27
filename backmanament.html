@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>會員帳號管理 - 回收管理後台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c5282;
+            --secondary-color: #3182ce;
+            --success-color: #38a169;
+            --warning-color: #d69e2e;
+            --danger-color: #e53e3e;
+            --light-gray: #f7fafc;
+            --dark-gray: #2d3748;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            line-height: 1.6;
+        }
+
+        .container-fluid {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 側邊欄樣式 */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 10px 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            border-left-color: white;
+        }
+
+        .menu-item.active {
+            background-color: rgba(255,255,255,0.15);
+            color: white;
+            border-left-color: white;
+        }
+
+        .menu-item i {
+            width: 20px;
+            margin-right: 10px;
+        }
+
+        .badge {
+            margin-left: auto;
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* 主要內容區域 */
+        .content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 0;
+        }
+
+        /* 頁首樣式 */
+        .header {
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--dark-gray);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--light-gray);
+            border-radius: 25px;
+            padding: 8px 15px;
+            margin: 0 20px;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-box input {
+            border: none;
+            background: none;
+            outline: none;
+            flex: 1;
+            padding: 5px;
+        }
+
+        .search-box button {
+            background: none;
+            border: none;
+            color: var(--dark-gray);
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-toggle {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .dropdown-toggle:hover {
+            background-color: var(--light-gray);
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            z-index: 1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: var(--dark-gray);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--light-gray);
+        }
+
+        .dropdown-content a i {
+            margin-right: 8px;
+        }
+
+        /* 統計卡片 */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .stat-card {
+            padding: 25px;
+            display: flex;
+            align-items: center;
+        }
+
+        .stat-card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-card-icon.users { background: var(--primary-color); }
+        .stat-card-icon.orders { background: var(--success-color); }
+        .stat-card-icon.products { background: var(--warning-color); }
+        .stat-card-icon.income { background: var(--danger-color); }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--dark-gray);
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* 表格容器 */
+        .table-container {
+            margin: 0 30px 30px;
+            padding: 25px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--light-gray);
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        tr:hover {
+            background-color: rgba(44, 82, 130, 0.05);
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background-color: rgba(56, 161, 105, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-inactive {
+            background-color: rgba(229, 62, 62, 0.1);
+            color: var(--danger-color);
+        }
+
+        .status-pending {
+            background-color: rgba(214, 158, 46, 0.1);
+            color: var(--warning-color);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .edit-btn, .delete-btn, .save-btn, .cancel-btn, .approve-btn, .reject-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+
+        .edit-btn {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background-color: #b7791f;
+        }
+
+        .delete-btn, .reject-btn {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .delete-btn:hover, .reject-btn:hover {
+            background-color: #c53030;
+        }
+
+        .save-btn, .approve-btn {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .save-btn:hover, .approve-btn:hover {
+            background-color: #2f855a;
+        }
+
+        .cancel-btn {
+            background-color: #718096;
+            color: white;
+        }
+
+        .cancel-btn:hover {
+            background-color: #4a5568;
+        }
+
+        /* 分頁 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .pagination a {
+            color: var(--primary-color);
+            padding: 8px 16px;
+            text-decoration: none;
+            border: 1px solid var(--border-color);
+            margin: 0 2px;
+        }
+
+        .pagination a:hover {
+            background-color: var(--light-gray);
+        }
+
+        .pagination a.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* 模態框樣式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: var(--primary-color);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .close-btn:hover {
+            color: var(--danger-color);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        form {
+            padding: 20px;
+        }
+
+        /* 登出確認對話框樣式 */
+        .logout-confirm {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .logout-confirm.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logout-confirm-content {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .logout-confirm-content h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .logout-confirm-content p {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .logout-confirm-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .logout-confirm-cancel, .logout-confirm-proceed {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .logout-confirm-cancel {
+            background-color: #718096;
+            color: white;
+        }
+
+        .logout-confirm-cancel:hover {
+            background-color: #4a5568;
+        }
+
+        .logout-confirm-proceed {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .logout-confirm-proceed:hover {
+            background-color: #c53030;
+        }
+
+        /* 回收審核樣式 */
+        .review-item {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .review-item-header {
+            background-color: var(--light-gray);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .review-item-title {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .review-item-date {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .review-item-content {
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .review-item-image {
+            width: 150px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .review-item-details {
+            flex: 1;
+        }
+
+        .review-item-detail {
+            margin-bottom: 8px;
+            display: flex;
+        }
+
+        .review-item-label {
+            font-weight: 500;
+            min-width: 80px;
+            color: var(--dark-gray);
+        }
+
+        .review-item-actions {
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .stats-cards {
+                grid-template-columns: 1fr;
+                padding: 15px;
+            }
+
+            .table-container {
+                margin: 0 15px 15px;
+                padding: 15px;
+            }
+
+            .header {
+                padding: 15px;
+            }
+
+            .search-box {
+                max-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3>回收管理後台</h3>
+            </div>
+            <nav class="sidebar-menu">
+                <a href="dashboard-home.html" class="menu-item">
+                    <i class="fas fa-home"></i>
+                    <span>主控台</span>
+                </a>
+                <a href="member-management.html" class="menu-item active">
+                    <i class="fas fa-users"></i>
+                    <span>會員帳號管理</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-box-open"></i>
+                    <span>會員訂單管理</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-coins"></i>
+                    <span>點數管理</span>
+                </a>
+                <a href="#" class="menu-item" id="recycleReviewLink">
+                    <i class="fas fa-recycle"></i>
+                    <span>回收瓶審核</span>
+                    <span class="badge" id="pendingReviewCount" style="background-color: var(--warning-color); color: white; border-radius: 10px; padding: 2px 6px; font-size: 0.7rem; margin-left: auto; display: none;">0</span>
+                </a>
+                <a href="/db-management-page" class="menu-item">
+                    <i class="fas fa-database"></i>
+                    <span>資料庫管理</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-cogs"></i>
+                    <span>系統設定</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                &copy; 2025回收系統
+            </div>
+        </aside>
+
+        <main class="content">
+            <header class="header">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1>會員帳號管理</h1>
+                <div class="search-box">
+                    <input type="text" placeholder="搜尋會員...">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="user-info">
+                    <img src="https://via.placeholder.com/40" alt="User Avatar"> 
+                    <div class="dropdown">
+                        <div class="dropdown-toggle">
+                           <span>管理員</span> <i class="fas fa-chevron-down" style="font-size: 0.8em; margin-left: 5px;"></i>
+                        </div>
+                        <div class="dropdown-content">
+                            <a href="#"><i class="fas fa-user-circle"></i> 個人資料</a>
+                            <a href="#"><i class="fas fa-cog"></i> 設定</a>
+                            <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> 登出</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <section class="table-container card">
+                <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 5px;">
+                    <h2 style="margin:0; font-size: 1.3rem;">會員列表</h2>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="save-btn" onclick="window.location.href='/create-account-page'"><i class="fas fa-user-plus"></i> 建立帳號</button>
+                        <button class="edit-btn" onclick="window.location.href='/db-management-page'"><i class="fas fa-database"></i> 資料庫管理</button>
+                        <button class="save-btn" onclick="openModal('addMemberModal', '新增會員')"><i class="fas fa-plus"></i> 新增會員</button>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>會員ID</th>
+                            <th>姓名</th>
+                            <th>Email</th>
+                            <th>電話</th>
+                            <th>註冊日期</th>
+                            <th>狀態</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>MEM001</td>
+                            <td>陳大文</td>
+                            <td>davidchen@example.com</td>
+                            <td>0912-345-678</td>
+                            <td>2025-01-15</td>
+                            <td><span class="status status-active">活躍</span></td>
+                            <td class="action-buttons">
+                                <button class="edit-btn" onclick="openModal('addMemberModal', '編輯會員', {id: 'MEM001', name: '陳大文', email: 'davidchen@example.com', phone: '0912-345-678', status: 'active'})"><i class="fas fa-edit"></i> 編輯</button>
+                                <button class="delete-btn"><i class="fas fa-trash"></i> 刪除</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>MEM002</td>
+                            <td>林小美</td>
+                            <td>meilin@example.com</td>
+                            <td>0922-123-456</td>
+                            <td>2025-02-20</td>
+                            <td><span class="status status-active">活躍</span></td>
+                            <td class="action-buttons">
+                               <button class="edit-btn" onclick="openModal('addMemberModal', '編輯會員', {id: 'MEM002', name: '林小美', email: 'meilin@example.com', phone: '0922-123-456', status: 'active'})"><i class="fas fa-edit"></i> 編輯</button>
+                                <button class="delete-btn"><i class="fas fa-trash"></i> 刪除</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>MEM003</td>
+                            <td>張三</td>
+                            <td>chang.san@example.com</td>
+                            <td>0988-765-432</td>
+                            <td>2025-04-05</td>
+                            <td><span class="status status-inactive">停用</span></td>
+                            <td class="action-buttons">
+                                <button class="edit-btn" onclick="openModal('addMemberModal', '編輯會員', {id: 'MEM003', name: '張三', email: 'chang.san@example.com', phone: '0988-765-432', status: 'inactive'})"><i class="fas fa-edit"></i> 編輯</button>
+                                <button class="delete-btn"><i class="fas fa-trash"></i> 刪除</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <nav class="pagination">
+                <a href="#">&laquo; 上一頁</a>
+                <a href="#" class="active">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#">下一頁 &raquo;</a>
+            </nav>
+        </main>
+    </div>
+
+    <!-- 新增/編輯會員模態框 -->
+    <div id="addMemberModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">新增會員</h2>
+                <button class="close-btn" onclick="closeModal('addMemberModal')">&times;</button>
+            </div>
+            <form id="memberForm">
+                <input type="hidden" id="memberId" name="memberId">
+                <div class="form-group">
+                    <label for="memberName">姓名:</label>
+                    <input type="text" id="memberName" name="memberName" required>
+                </div>
+                <div class="form-group">
+                    <label for="memberEmail">Email:</label>
+                    <input type="email" id="memberEmail" name="memberEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="memberPhone">電話:</label>
+                    <input type="tel" id="memberPhone" name="memberPhone">
+                </div>
+                <div class="form-group">
+                    <label for="memberStatus">狀態:</label>
+                    <select id="memberStatus" name="memberStatus">
+                        <option value="active">活躍</option>
+                        <option value="inactive">停用</option>
+                    </select>
+                </div>
+                <div class="form-buttons">
+                    <button type="button" class="cancel-btn" onclick="closeModal('addMemberModal')">取消</button>
+                    <button type="submit" class="save-btn">儲存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 回收物品審核模態框 -->
+    <div id="recycleReviewModal" class="modal">
+        <div class="modal-content" style="width: 700px;">
+            <div class="modal-header">
+                <h2>回收物品審核</h2>
+                <button class="close-btn" onclick="closeModal('recycleReviewModal')">&times;</button>
+            </div>
+            <div id="recycleReviewContent">
+                <div class="review-item">
+                    <div class="review-item-header">
+                        <div class="review-item-title">回收記錄 #REC001</div>
+                        <div class="review-item-date">2025-05-06 14:30</div>
+                    </div>
+                    <div class="review-item-content">
+                        <div>
+                            <img src="https://via.placeholder.com/300x200?text=回收物品照片" alt="回收物品" class="review-item-image">
+                        </div>
+                        <div class="review-item-details">
+                            <div class="review-item-detail">
+                                <span class="review-item-label">會員ID:</span>
+                                <span>MEM001</span>
+                            </div>
+                            <div class="review-item-detail">
+                                <span class="review-item-label">會員姓名:</span>
+                                <span>陳大文</span>
+                            </div>
+                            <div class="review-item-detail">
+                                <span class="review-item-label">AI辨識結果:</span>
+                                <span>寶特瓶 (500ml)</span>
+                            </div>
+                            <div class="review-item-detail">
+                                <span class="review-item-label">數量:</span>
+                                <span>3</span>
+                            </div>
+                            <div class="review-item-detail">
+                                <span class="review-item-label">預估點數:</span>
+                                <span>15</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="review-item-actions">
+                        <button class="reject-btn"><i class="fas fa-times"></i> 拒絕</button>
+                        <button class="approve-btn"><i class="fas fa-check"></i> 核准</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增登出確認對話框 -->
+    <div id="logoutConfirm" class="logout-confirm">
+        <div class="logout-confirm-content">
+            <h3>確認登出</h3>
+            <p>您確定要登出管理後台嗎？請確認您已保存所有變更。</p>
+            <div class="logout-confirm-buttons">
+                <button class="logout-confirm-cancel" onclick="closeModal('logoutConfirm')">取消</button>
+                <button class="logout-confirm-proceed" onclick="performLogout()">確認登出</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        if (localStorage.getItem('loggedIn') !== 'true') {
+            window.location.href = '/admin_login-page';
+        }
+
+        // 側邊欄切換
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('show');
+        });
+
+        function openModal(modalId, title, data = null) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('show');
+            
+            if (title && modalId === 'addMemberModal') {
+                document.getElementById('modalTitle').textContent = title;
+                
+                if (data) {
+                    document.getElementById('memberId').value = data.id || '';
+                    document.getElementById('memberName').value = data.name || '';
+                    document.getElementById('memberEmail').value = data.email || '';
+                    document.getElementById('memberPhone').value = data.phone || '';
+                    document.getElementById('memberStatus').value = data.status || 'active';
+                } else {
+                    document.getElementById('memberForm').reset();
+                }
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        document.getElementById('memberForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('會員資料已儲存');
+            closeModal('addMemberModal');
+        });
+
+        // 登出功能
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            openModal('logoutConfirm');
+        });
+
+        function performLogout() {
+            localStorage.removeItem('loggedIn');
+            window.location.href = '/admin_login-page';
+        }
+
+        setTimeout(() => {
+            const pendingCount = 1;
+            const badge = document.getElementById('pendingReviewCount');
+            badge.textContent = pendingCount;
+            badge.style.display = 'inline-block';
+        }, 1000);
+
+        // 點擊回收審核連結
+        document.getElementById('recycleReviewLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            openModal('recycleReviewModal');
+        });
+
+        // 點擊外部關閉 modal
+        window.addEventListener('click', function(e) {
+            const modals = document.querySelectorAll('.modal.show');
+            modals.forEach(modal => {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>綠色點數商城</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f0f9f5 0%, #e6f7f3 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        :root {
+            --primary-color: rgb(0, 137, 123);
+            --primary-light: rgba(0, 137, 123, 0.1);
+            --primary-dark: rgb(0, 110, 99);
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-bottom: 4px solid var(--primary-color);
+            padding: 1rem 0;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            background: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .logo-text h1 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 0.2rem;
+        }
+
+        .logo-text p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .points-display {
+            text-align: center;
+        }
+
+        .points-value {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .points-label {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .cart-icon {
+            position: relative;
+            font-size: 1.5rem;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        /* Navigation */
+        .nav {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            padding: 0 1rem;
+        }
+
+        .nav-item {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .nav-item:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        /* Main Content */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* Category Filter */
+        .category-filter {
+            margin-bottom: 2rem;
+        }
+
+        .category-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .category-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 25px;
+            background: white;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .category-btn.active {
+            background: var(--primary-color);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        /* Products Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-image {
+            text-align: center;
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .star {
+            color: #ffd700;
+        }
+
+        .star.empty {
+            color: #ddd;
+        }
+
+        .product-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .product-description {
+            color: #666;
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .product-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .product-points {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .points-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .original-price {
+            font-size: 0.8rem;
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        .product-category {
+            background: var(--primary-light);
+            color: var(--primary-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
+        .exchange-btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .exchange-btn.available {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .exchange-btn.available:hover {
+            background: var(--primary-dark);
+            transform: scale(1.02);
+        }
+
+        .exchange-btn.disabled {
+            background: #ccc;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            display: none;
+        }
+
+        .stats-section.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .stats-title i {
+            color: var(--primary-color);
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: var(--primary-light);
+            border-radius: 12px;
+        }
+
+        .stat-left {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-type {
+            font-weight: bold;
+            margin-bottom: 0.2rem;
+        }
+
+        .stat-count {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .stat-points {
+            text-align: right;
+        }
+
+        .stat-points-value {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .stat-points-label {
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .achievement-card {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--primary-light);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .achievement-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .achievement-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.2rem;
+        }
+
+        .achievement-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Leaderboard */
+        .leaderboard-section {
+            display: none;
+        }
+
+        .leaderboard-section.active {
+            display: block;
+        }
+
+        .leaderboard-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            background: var(--primary-light);
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-item.current-user {
+            background: var(--primary-light);
+            border: 2px solid var(--primary-color);
+            transform: scale(1.02);
+        }
+
+        .leaderboard-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .rank-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .rank-1 { background: #ffd700; }
+        .rank-2 { background: #c0c0c0; }
+        .rank-3 { background: #cd7f32; }
+        .rank-other { background: var(--primary-color); }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: bold;
+            margin-bottom: 0.2rem;
+        }
+
+        .user-items {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .user-points {
+            text-align: right;
+        }
+
+        .user-points-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .user-points-label {
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        /* Floating Button */
+        .floating-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .floating-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-container {
+                flex-direction: column;
+            }
+
+            .nav-item {
+                justify-content: center;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .category-buttons {
+                justify-content: center;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-recycle"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>綠色點數商城</h1>
+                    <p>回收換點數，綠色新生活</p>
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <div class="points-display">
+                    <div class="points-value">
+                        <i class="fas fa-award"></i>
+                        <span id="userPoints">0</span>
+                    </div>
+                    <div class="points-label">可用點數</div>
+                </div>
+                
+                <div class="cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-badge hidden" id="cartBadge">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="nav-item active" data-tab="products">
+                <i class="fas fa-gift"></i>
+                <span>商品兌換</span>
+            </div>
+            <div class="nav-item" data-tab="stats">
+                <i class="fas fa-chart-line"></i>
+                <span>回收統計</span>
+            </div>
+            <div class="nav-item" data-tab="leaderboard">
+                <i class="fas fa-users"></i>
+                <span>排行榜</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Products Section -->
+        <section id="products-section" class="products-section">
+            <!-- Category Filter -->
+            <div class="category-filter">
+                <div class="category-buttons">
+                    <button class="category-btn active" data-category="全部">全部</button>
+                    <button class="category-btn" data-category="生活用品">生活用品</button>
+                    <button class="category-btn" data-category="餐具">餐具</button>
+                    <button class="category-btn" data-category="電子產品">電子產品</button>
+                    <button class="category-btn" data-category="園藝">園藝</button>
+                    <button class="category-btn" data-category="家用">家用</button>
+                    <button class="category-btn" data-category="清潔用品">清潔用品</button>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="products-grid" id="productsGrid">
+                <!-- Products will be generated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section id="stats-section" class="stats-section">
+            <div class="stats-grid">
+                <div class="stats-card">
+                    <div class="stats-title">
+                        <i class="fas fa-chart-line"></i>
+                        <span>本月回收統計</span>
+                    </div>
+                    <div id="recyclingStats">
+                        <!-- Stats will be generated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="stats-card">
+                    <div class="stats-title">
+                        <i class="fas fa-leaf"></i>
+                        <span>環保成就</span>
+                    </div>
+                    <div class="achievement-card">
+                        <div class="achievement-icon">🌍</div>
+                        <div class="achievement-value">12.5 kg</div>
+                        <div class="achievement-label">減少碳排放</div>
+                    </div>
+                    <div class="achievement-card">
+                        <div class="achievement-icon">🌱</div>
+                        <div class="achievement-value">3</div>
+                        <div class="achievement-label">拯救樹木</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Leaderboard Section -->
+        <section id="leaderboard-section" class="leaderboard-section">
+            <div class="leaderboard-card">
+                <div class="stats-title">
+                    <i class="fas fa-users"></i>
+                    <span>本月環保英雄榜</span>
+                </div>
+                <div id="leaderboardList">
+                    <!-- Leaderboard will be generated by JavaScript -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Floating Button -->
+    <button class="floating-btn">
+        <i class="fas fa-recycle"></i>
+    </button>
+
+    <script>
+        // Application State
+        let userPoints = 0;
+        let cart = [];
+        let activeTab = 'products';
+        let selectedCategory = '全部';
+
+        // Products Data
+        const products = [
+            {
+                id: 1,
+                name: '環保購物袋',
+                points: 150,
+                originalPrice: 299,
+                image: '🛍️',
+                category: '生活用品',
+                description: '100%有機棉製作，可重複使用',
+                inStock: true,
+                rating: 4.8
+            },
+            {
+                id: 2,
+                name: '竹製餐具組',
+                points: 280,
+                originalPrice: 560,
+                image: '🥢',
+                category: '餐具',
+                description: '天然竹子製成，環保無毒',
+                inStock: true,
+                rating: 4.9
+            },
+            {
+                id: 3,
+                name: '太陽能行動電源',
+                points: 850,
+                originalPrice: 1699,
+                image: '🔋',
+                category: '電子產品',
+                description: '綠能充電，戶外必備',
+                inStock: true,
+                rating: 4.7
+            },
+            {
+                id: 4,
+                name: '有機蔬菜種子包',
+                points: 120,
+                originalPrice: 240,
+                image: '🌱',
+                category: '園藝',
+                description: '在家種植新鮮蔬菜',
+                inStock: true,
+                rating: 4.6
+            },
+            {
+                id: 5,
+                name: '節水蓮蓬頭',
+                points: 450,
+                originalPrice: 899,
+                image: '🚿',
+                category: '家用',
+                description: '節水50%，環保省錢',
+                inStock: false,
+                rating: 4.8
+            },
+            {
+                id: 6,
+                name: '環保清潔劑套組',
+                points: 320,
+                originalPrice: 640,
+                image: '🧽',
+                category: '清潔用品',
+                description: '天然成分，無化學添加',
+                inStock: true,
+                rating: 4.5
+            }
+        ];
+
+        // Recycling Stats Data
+        const recyclingStats = [
+            { type: '塑膠瓶', count: 45, points: 540 },
+            { type: '鋁罐', count: 32, points: 384 },
+            { type: '紙類', count: 28, points: 336 },
+            { type: '玻璃瓶', count: 15, points: 225 }
+        ];
+
+        // Leaderboard Data
+        const leaderboard = [
+            { rank: 1, name: '環保小王子', points: 3280, items: 156 },
+            { rank: 2, name: '綠色生活家', points: 2890, items: 134 },
+            { rank: 3, name: '回收達人', points: 2580, items: 120, isCurrentUser: true },
+            { rank: 4, name: '地球守護者', points: 2340, items: 108 },
+            { rank: 5, name: '環保新星', points: 2100, items: 95 }
+        ];
+
+        // Initialize Application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            setupEventListeners();
+            renderProducts();
+            renderStats();
+            renderLeaderboard();
+            updatePointsDisplay();
+        }
+
+        function setupEventListeners() {
+            // Navigation tabs
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const tab = this.getAttribute('data-tab');
+                    switchTab(tab);
+                });
+            });
+
+            // Category buttons
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const category = this.getAttribute('data-category');
+                    filterByCategory(category);
+                });
+            });
+        }
+
+        function switchTab(tab) {
+            // Update active nav item
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+
+            // Hide all sections
+            document.querySelectorAll('.products-section, .stats-section, .leaderboard-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(`${tab}-section`).classList.add('active');
+            
+            activeTab = tab;
+        }
+
+        function filterByCategory(category) {
+            // Update active category button
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-category="${category}"]`).classList.add('active');
+
+            selectedCategory = category;
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const filteredProducts = selectedCategory === '全部' 
+                ? products 
+                : products.filter(product => product.category === selectedCategory);
+
+            const productsGrid = document.getElementById('productsGrid');
+            productsGrid.innerHTML = '';
+
+            filteredProducts.forEach(product => {
+                const productCard = createProductCard(product);
+                productsGrid.appendChild(productCard);
+            });
+        }
+
+        function createProductCard(product) {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+
+            const canExchange = product.inStock && userPoints >= product.points;
+            const buttonClass = canExchange ? 'available' : 'disabled';
+            const buttonText = !product.inStock ? '暫時缺貨' : 
+                              userPoints < product.points ? '點數不足' : '立即兌換';
+
+            card.innerHTML = `
+                <div class="product-image">${product.image}</div>
+                <div class="product-rating">
+                    ${generateStars(product.rating)}
+                    <span style="margin-left: 0.5rem; color: #666; font-size: 0.9rem;">(${product.rating})</span>
+                </div>
+                <div class="product-name">${product.name}</div>
+                <div class="product-description">${product.description}</div>
+                <div class="product-info">
+                    <div class="product-points">
+                        <i class="fas fa-award" style="color: var(--primary-color);"></i>
+                        <span class="points-number">${product.points}</span>
+                        <span style="color: #666; font-size: 0.9rem;">點數</span>
+                        <div class="original-price">原價 $${product.originalPrice}</div>
+                    </div>
+                    <div class="product-category">${product.category}</div>
+                </div>
+                <button class="exchange-btn ${buttonClass}" 
+                        onclick="exchangeProduct(${product.id})" 
+                        ${!canExchange ? 'disabled' : ''}>
+                    ${buttonText}
+                </button>
+            `;
+
+            return card;
+        }
+
+        function generateStars(rating) {
+            const fullStars = Math.floor(rating);
+            let starsHtml = '';
+            
+            for (let i = 0; i < 5; i++) {
+                if (i < fullStars) {
+                    starsHtml += '<i class="fas fa-star star"></i>';
+                } else {
+                    starsHtml += '<i class="fas fa-star star empty"></i>';
+                }
+            }
+            
+            return starsHtml;
+        }
+
+        function exchangeProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product && product.inStock && userPoints >= product.points) {
+                userPoints -= product.points;
+                cart.push(product);
+                updatePointsDisplay();
+                updateCartBadge();
+                renderProducts(); // Re-render to update button states
+                
+                // Show success message
+                showNotification(`成功兌換 ${product.name}！`);
+            }
+        }
+
+        function updatePointsDisplay() {
+            document.getElementById('userPoints').textContent = userPoints;
+        }
+
+        function updateCartBadge() {
+            const cartBadge = document.getElementById('cartBadge');
+            if (cart.length > 0) {
+                cartBadge.textContent = cart.length;
+                cartBadge.classList.remove('hidden');
+            } else {
+                cartBadge.classList.add('hidden');
+            }
+        }
+
+        function renderStats() {
+            const statsContainer = document.getElementById('recyclingStats');
+            statsContainer.innerHTML = '';
+
+            recyclingStats.forEach(stat => {
+                const statItem = document.createElement('div');
+                statItem.className = 'stat-item';
+                statItem.innerHTML = `
+                    <div class="stat-left">
+                        <div class="stat-type">${stat.type}</div>
+                        <div class="stat-count">${stat.count} 個</div>
+                    </div>
+                    <div class="stat-points">
+                        <div class="stat-points-value">+${stat.points}</div>
+                        <div class="stat-points-label">點數</div>
+                    </div>
+                `;
+                statsContainer.appendChild(statItem);
+            });
+        }
+
+        function renderLeaderboard() {
+            const leaderboardContainer = document.getElementById('leaderboardList');
+            leaderboardContainer.innerHTML = '';
+
+            leaderboard.forEach(user => {
+                const userItem = document.createElement('div');
+                userItem.className = `leaderboard-item ${user.isCurrentUser ? 'current-user' : ''}`;
+                
+                const rankClass = user.rank <= 3 ? `rank-${user.rank}` : 'rank-other';
+                
+                userItem.innerHTML = `
+                    <div class="leaderboard-left">
+                        <div class="rank-badge ${rankClass}">${user.rank}</div>
+                        <div class="user-info">
+                            <div class="user-name">${user.name}</div>
+                            <div class="user-items">回收 ${user.items} 項物品</div>
+                        </div>
+                    </div>
+                    <div class="user-points">
+                        <div class="user-points-value">${user.points}</div>
+                        <div class="user-points-label">點數</div>
+                    </div>
+                `;
+                
+                leaderboardContainer.appendChild(userItem);
+            });
+        }
+
+        function showNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--primary-color);
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                z-index: 1001;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 10);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

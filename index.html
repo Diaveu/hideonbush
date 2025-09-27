@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>環保回收兌換系統 - 主頁 | 回收換點數，共創永續未來</title>
+  <meta name="description" content="加入「環保回收兌換系統」，透過回收塑膠瓶、紙類等日常廢棄物即可賺取環保點數，兌換豐富商品。輕鬆參與資源回收，為地球永續發展盡一份心力。立即了解如何開始！">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: #2d3748; 
+      line-height: 1.6;
+      background-color: #ffffff; 
+      overflow-x: hidden;
+    }
+    
+    /* 導航欄 */
+    .navbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      background: rgba(240, 240, 237, 0.9); 
+      backdrop-filter: blur(15px); 
+      border-bottom: 1px solid #e0e0d9;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .navbar.scrolled {
+      background: rgba(240, 240, 237, 0.98); 
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06); 
+    }
+    
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 clamp(1rem, 4vw, 2rem);
+      height: clamp(60px, 8vh, 80px);
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: clamp(1.1rem, 3vw, 1.5rem);
+      color: #00695c; 
+      transition: transform 0.3s ease;
+    }
+    
+    .logo:hover {
+      transform: scale(1.02);
+    }
+    
+    .logo-icon {
+      width: clamp(36px, 6vw, 48px);
+      height: clamp(40px, 7vh, 54px);
+      background-image: url('/static/S__3825671.png');
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      /* 移除白底 */
+      background-color: transparent;
+      border-radius: 12px;
+      margin-right: clamp(8px, 2vw, 12px);
+      /* 調整陰影以配合透明背景 */
+      filter: drop-shadow(0 4px 8px rgba(0, 137, 123, 0.2));
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .logo-icon::before {
+      font-size: clamp(18px, 4vw, 24px);
+      animation: pulse 2s ease-in-out infinite; 
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: clamp(1rem, 3vw, 2rem);
+      align-items: center;
+    }
+    
+    .nav-links a {
+      text-decoration: none;
+      color: #7a7a75; 
+      font-weight: 500;
+      position: relative;
+      padding: 0.5rem 0;
+      font-size: clamp(0.85rem, 2.5vw, 1rem);
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+    
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: rgba(0, 137, 123, 0.3); 
+      transition: width 0.3s ease;
+    }
+    
+    .nav-links a:hover {
+      color: rgb(0, 137, 123); 
+    }
+    
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    /* 漢堡選單 */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      padding: 0.5rem; /* 增加點擊區域 */
+      gap: 5px; /* 調整線條間距 */
+      z-index: 1001; /* 確保在其他元素之上 */
+    }
+
+    .hamburger span {
+      width: 25px;
+      height: 3px;
+      background: #00695c;
+      transition: all 0.3s ease;
+      border-radius: 2px;
+    }
+
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(6px, 6px);
+    }
+
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(6px, -6px);
+    }
+
+    .mobile-menu {
+      display: none;
+      position: absolute;
+      top: 100%; /* 相對於 navbar 的底部 */
+      left: 0;
+      width: 100%;
+      background: rgba(240, 240, 237, 0.98);
+      backdrop-filter: blur(15px);
+      border-top: 1px solid #e0e0d9; /* 分隔線 */
+      border-bottom: 1px solid #e0e0d9;
+      padding: 0.5rem 0; /* 上下留白 */
+      z-index: 1000; /* 與 navbar 同層級或略低，但高於頁面內容 */
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+
+    .mobile-menu.active {
+      display: block;
+    }
+
+    .mobile-menu a {
+      display: block;
+      padding: 0.85rem clamp(1rem, 4vw, 2rem); /* 增加內距 */
+      color: #7a7a75;
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1px solid rgba(224, 224, 217, 0.5);
+      transition: all 0.3s ease;
+      font-size: clamp(0.9rem, 2.5vw, 1rem);
+    }
+    .mobile-menu a:last-child {
+        border-bottom: none; /* 最後一個連結無底線 */
+    }
+
+    .mobile-menu a:hover {
+      color: #00695c;
+      background: rgba(0, 137, 123, 0.05);
+    }
+    
+    /* 主視覺區域 */
+    .hero {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f0f2eb 0%, #e8eae2 50%, #dde0d7 100%); 
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      padding-top: clamp(60px, 8vh, 80px); /* 確保內容不被 navbar 遮擋 */
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(0, 137, 123, 0.08) 0%, transparent 70%); 
+      animation: float 20s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-15px) rotate(3deg); } 
+    }
+    
+    .hero-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 clamp(1rem, 4vw, 2rem);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(2rem, 6vw, 4rem);
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .hero-content h1 {
+      font-size: clamp(2rem, 6vw, 3.8rem); 
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: rgb(0, 137, 123); 
+      line-height: 1.2;
+    }
+    
+    .hero-content p {
+      font-size: clamp(1rem, 2.5vw, 1.2rem); 
+      color: #70706b; 
+      margin-bottom: 2.5rem;
+      line-height: 1.7;
+    }
+    
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: clamp(0.75rem, 2vw, 0.9rem) clamp(1.2rem, 3vw, 1.8rem); 
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: clamp(0.85rem, 2vw, 0.95rem); 
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      border: none;
+      position: relative;
+      overflow: hidden;
+      min-width: 120px;
+      text-align: center;
+    }
+    
+    .btn-primary {
+      background: rgb(0, 137, 123); 
+      color: #f0f0ed;
+      box-shadow: 0 5px 12px rgba(0, 137, 123, 0.3); 
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 7px 18px rgba(0, 137, 123, 0.4);
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      color: rgb(0, 137, 123); 
+      border: 2px solid rgb(0, 137, 123); 
+    }
+    
+    .btn-secondary:hover {
+      background: rgba(0, 137, 123, 0.1);
+      color: rgb(0, 137, 123);
+      transform: translateY(-2px);
+    }
+    
+    .hero-visual {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .hero-circle {
+      width: clamp(200px, 35vw, 400px);
+      height: clamp(200px, 35vw, 400px);
+      border-radius: 50%;
+      background: rgb(0, 137, 123); 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 30px rgba(0, 137, 123, 0.25); 
+      animation: pulse 4s ease-in-out infinite;
+      position: relative;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); } 
+    }
+    
+    .hero-circle::before {
+      content: '♻️';
+      font-size: clamp(3rem, 8vw, 8rem);
+      animation: rotate 12s linear infinite; 
+    }
+    
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    /* 特色功能區域 */
+    .features {
+      padding: clamp(3rem, 8vw, 5rem) clamp(1rem, 4vw, 2rem); 
+      background: #e9ebe4; 
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .section-header {
+      text-align: center;
+      margin-bottom: clamp(2rem, 6vw, 3.5rem); 
+    }
+    
+    .section-header h2 {
+      font-size: clamp(1.5rem, 5vw, 2.8rem); 
+      font-weight: 700;
+      color: rgb(0, 137, 123); 
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+    
+    .section-header p {
+      font-size: clamp(0.95rem, 2.5vw, 1.1rem); 
+      color: #70706b; 
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: clamp(1.5rem, 4vw, 2rem);
+    }
+    
+    .feature-card {
+      background: #fdfdfb; 
+      padding: clamp(1.5rem, 4vw, 2.5rem);
+      border-radius: 16px; 
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05); 
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid #e0e2d9; 
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: rgba(0, 137, 123, 0.3); 
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+    
+    .feature-card:hover::before {
+      transform: scaleX(1);
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-6px); 
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+    }
+    
+    .feature-icon {
+      width: clamp(50px, 8vw, 70px); 
+      height: clamp(50px, 8vw, 70px);
+      border-radius: 16px;
+      background: linear-gradient(135deg, #e8eae2, #dde0d7); 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      transition: transform 0.3s ease;
+    }
+    
+    .feature-card:hover .feature-icon {
+      transform: scale(1.08); 
+    }
+    
+    .feature-icon svg {
+      width: clamp(24px, 5vw, 36px); 
+      height: clamp(24px, 5vw, 36px);
+      stroke: rgb(0, 137, 123); 
+      stroke-width: 2.5;
+    }
+    
+    .feature-card h3 {
+      font-size: clamp(1.1rem, 3vw, 1.4rem); 
+      font-weight: 600;
+      color: rgb(0, 137, 123); 
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+    
+    .feature-card p {
+      color: #70706b; 
+      line-height: 1.7;
+      font-size: clamp(0.85rem, 2vw, 0.95rem);
+    }
+    
+    /* CTA 區域 */
+    .cta-section {
+      background: linear-gradient(135deg, #00695C, #004D40);
+      padding: clamp(3rem, 8vw, 5rem) clamp(1rem, 4vw, 2rem); 
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.08)"/><circle cx="80" cy="40" r="1" fill="rgba(255,255,255,0.08)"/><circle cx="40" cy="80" r="1" fill="rgba(255,255,255,0.08)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+      opacity: 0.6;
+    }
+    
+    .cta-content {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .cta-content h2 {
+      font-size: clamp(1.5rem, 5vw, 2.8rem); 
+      font-weight: 700;
+      color: #f0f0ed; 
+      margin-bottom: 1.5rem;
+      line-height: 1.3;
+    }
+    
+    .cta-content p {
+      font-size: clamp(1rem, 2.5vw, 1.15rem); 
+      color: #d8d8d2; 
+      margin-bottom: 2.5rem;
+      line-height: 1.7;
+    }
+    
+    .btn-cta {
+      background: #f0f0ed; 
+      color: rgb(0, 137, 123); 
+      padding: clamp(0.8rem, 2.5vw, 1.1rem) clamp(1.8rem, 4vw, 2.8rem); 
+      font-size: clamp(0.9rem, 2vw, 1rem); 
+      font-weight: 600;
+      border-radius: 50px;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1); 
+    }
+    
+    .btn-cta:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 7px 18px rgba(0, 0, 0, 0.12);
+    }
+    
+    /* 頁腳 */
+    .footer {
+      background: linear-gradient(135deg, #1f2937, #111827);
+      color: white;
+      padding: clamp(3rem, 8vw, 5rem) clamp(1rem, 4vw, 2rem) 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: clamp(1.5rem, 4vw, 3rem);
+    }
+    
+    .footer-brand h3 {
+      font-size: clamp(1.2rem, 3vw, 1.5rem);
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #4DB6AC;
+    }
+    
+    .footer-brand p {
+      color: #b0b4aa; 
+      line-height: 1.7;
+      margin-bottom: 1rem;
+      font-size: clamp(0.8rem, 2vw, 0.9rem);
+    }
+    
+    .footer-section h4 {
+      font-size: clamp(1rem, 2.5vw, 1.1rem);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: #f0f0ed; 
+    }
+    
+    .footer-section ul {
+      list-style: none;
+    }
+    
+    .footer-section li {
+      margin-bottom: 0.75rem;
+    }
+    
+    .footer-section a {
+      color: #b0b4aa;
+      text-decoration: none;
+      transition: color 0.3s ease;
+      font-size: clamp(0.8rem, 2vw, 0.95rem);
+    }
+    
+    .footer-section a:hover {
+      color: #4DB6AC;
+    }
+    
+    .footer-bottom {
+      border-top: 1px solid #00695C; 
+      margin-top: 3rem;
+      padding-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: clamp(0.8rem, 2vw, 0.9rem);
+    }
+    
+    .social-links {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .social-links a {
+      width: clamp(32px, 6vw, 38px); 
+      height: clamp(32px, 6vw, 38px);
+      border-radius: 10px;
+      background: #00695C; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #b0b4aa;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-size: clamp(0.8rem, 2vw, 1rem);
+    }
+    
+    .social-links a:hover {
+      background: #4DB6AC; 
+      color: #004D40; 
+      transform: translateY(-2px);
+    }
+    
+    /* 響應式設計 */
+    @media (max-width: 1024px) {
+      .hero-container {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 3rem;
+      }
+      
+      .hero-visual {
+        order: -1;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+
+      /* .navbar {
+        position: relative; 
+      } */
+      /* 上一行 navbar position:relative 註解掉，以讓 mobile-menu 的 absolute 定位參考 fixed 的 navbar */
+
+      .mobile-menu {
+        /* position: static; 改回 absolute 以正確顯示在 navbar 下方 */
+        /* 如果 navbar 維持 fixed，mobile-menu 也應相對於它或 viewport 定位 */
+      } 
+      
+      .hero {
+        /* padding-top: 0; 如果 navbar 不是 relative，這個可能需要調整 */
+        /* 因為 navbar 仍是 fixed，所以 hero 的 padding-top: clamp(60px, 8vh, 80px); 依然有效 */
+      }
+      
+      .hero-buttons {
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .btn {
+        width: 100%;
+        max-width: 280px;
+      }
+      
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .footer-content {
+        grid-template-columns: 1fr; 
+        text-align: center; 
+      }
+        
+      .footer-brand, .footer-section {
+        margin-bottom: 2rem;
+      }
+      
+      .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-buttons {
+        gap: 0.5rem;
+      }
+      
+      .btn {
+        padding: clamp(0.75rem, 4vw, 0.875rem) clamp(1.2rem, 5vw, 1.5rem);
+        font-size: clamp(0.8rem, 3vw, 0.9rem);
+        max-width: 100%;
+      }
+
+      .feature-card {
+        padding: 1.5rem;
+      }
+      
+      .footer-content {
+        gap: 1.5rem;
+      }
+
+      .social-links {
+        justify-content: center;
+      }
+    }
+
+    /* 超小螢幕優化 */
+    @media (max-width: 360px) {
+      .nav-container {
+        padding: 0 1rem;
+      }
+
+      .hero-container {
+        padding: 0 1rem;
+      }
+
+      .container {
+        padding: 0 1rem;
+      }
+
+      .btn {
+        min-width: auto;
+        width: 100%;
+      }
+    }
+
+    /* 大螢幕優化 */
+    @media (min-width: 1440px) {
+      .nav-container,
+      .hero-container,
+      .container,
+      .cta-content,
+      .footer-content {
+        max-width: 1400px;
+      }
+    }
+
+    /* 高解析度螢幕優化 */
+    @media (min-resolution: 2dppx) {
+      .logo-icon {
+        background-size: contain;
+      }
+    }
+
+    /* 改善觸控體驗 */
+    @media (hover: none) and (pointer: coarse) {
+      .btn:hover,
+      .feature-card:hover,
+      .nav-links a:hover {
+        transform: none;
+      }
+
+      .btn:active {
+        transform: scale(0.98);
+      }
+    }
+
+    /* 減少動畫效果（節省電池） */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "環保回收兌換系統",
+    "url": "https://www.yourrecyclingsystem.com.tw/", 
+    "logo": "https://www.yourrecyclingsystem.com.tw/images/logo.png",
+    "description": "環保回收兌換系統是一個激勵民眾參與資源回收的創新平台。回收物品獲取點數，兌換環保商品，一起為地球盡一份心力！",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "email": "eco@recycling.com",
+      "contactType": "customer service",
+      "url": "https://www.yourrecyclingsystem.com.tw/contact-page"
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://www.yourrecyclingsystem.com.tw/search?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    },
+    "sameAs": [
+      "https://www.facebook.com/yourprofile",
+      "https://www.instagram.com/yourprofile"
+    ]
+  }
+  </script>
+</head>
+<body>
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="/" class="logo"> <div class="logo-icon"></div>
+        環保回收兌換系統
+      </a>
+      <div class="nav-links">
+        <a href="/">首頁</a>
+        <a href="/howto-page">如何使用</a>
+        <a href="/about-page">關於我們</a>
+        <a href="/contact-page">聯絡我們</a>
+        <a href="/admin_login-page">管理員登入</a>
+      </div>
+      <div class="hamburger" id="hamburger-icon">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobile-menu-links">
+      <a href="/">首頁</a>
+      <a href="/howto-page">如何使用</a>
+      <a href="/about-page">關於我們</a>
+      <a href="/contact-page">聯絡我們</a>
+      <a href="/admin_login-page">管理員登入</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-container">
+      <div class="hero-content">
+        <h1>共創永續環境未來</h1>
+        <p>環保回收兌換系統是一個激勵民眾參與資源回收的創新平台。回收物品獲取點數，兌換環保商品，一起為地球盡一份心力！</p>
+        <div class="hero-buttons">
+          <a href="/register-page" class="btn btn-primary">✨ 立即註冊</a>
+          <a href="/login-page" class="btn btn-secondary">🔐 會員登入</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-circle"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="features"> <div class="container">
+      <div class="section-header">
+        <h2>我們的特色功能</h2>
+        <p>簡單幾個步驟，參與永續循環，讓環保變得更有趣、更有意義</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path>
+              <line x1="12" x2="12" y1="8" y2="16"></line>
+              <line x1="8" x2="16" y1="12" y2="12"></line>
+            </svg>
+          </div>
+          <h3>智慧回收換點數</h3>
+          <p>將塑膠瓶、紙類、金屬等回收物送至回收站，經過AI智慧辨識系統掃描與精準計重，立即獲得相應的環保點數回饋。</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <h3>豐富商品兌換</h3>
+          <p>累積的點數可兌換各式精選環保商品，從日常生活用品到時尚環保配件應有盡有，讓您的環保行動獲得實質且有意義的回饋。</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+            </svg>
+          </div>
+          <h3>成就追蹤系統</h3>
+          <p>詳細記錄您的回收歷程與環保足跡，透過精美的數據視覺化圖表呈現您為環境保護做出的貢獻，並獲得專屬成就徽章。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section" id="join-us"> <div class="cta-content">
+      <h2>🌍 加入我們，為地球盡一份心力</h2>
+      <p>現在註冊環保回收兌換系統，開始您的綠色生活之旅。每一個小小的環保行動，都能為我們美麗的地球帶來巨大而深遠的正面改變。</p>
+      <a href="/register-page" class="btn-cta">🚀 立即開始環保之旅</a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <h3>🌱 環保回收兌換系統</h3>
+        <p>透過創新的點數回饋機制與智慧科技應用，鼓勵全民積極參與環保回收行動，共同建立永續發展的美好未來，為下一代留下更潔淨的地球。</p>
+        <p><strong>📧 聯絡我們：</strong> <a href="mailto:eco@recycling.com" style="color: #9ca3af; text-decoration: none;">eco@recycling.com</a></p>
+      </div>
+      
+      <div class="footer-section">
+        <h4>快速連結</h4>
+        <ul>
+          <li><a href="/">🏠 首頁</a></li>
+          <li><a href="/howto-page">📖 如何使用</a></li>
+          <li><a href="/locations">📍 回收站地點</a></li> <li><a href="/rewards-store">🛍️ 兌換商城</a></li> </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4>關於我們</h4>
+        <ul>
+          <li><a href="/about-page">🏢 公司簡介</a></li>
+          <li><a href="/contact-page">📞 聯絡我們</a></li>
+          <li><a href="/partners">🤝 合作夥伴</a></li> <li><a href="/news">📰 最新消息</a></li> </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4>幫助中心</h4>
+        <ul>
+          <li><a href="/faq-page">❓ 常見問題</a></li>
+          <li><a href="/howto-page">📚 使用指南</a></li>
+          <li><a href="/privacy-policy">🔒 隱私政策</a></li> <li><a href="/terms-of-service">📋 服務條款</a></li> </ul>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <div class="copyright">© 2025 環保回收兌換系統 版權所有</div>
+      <div class="social-links">
+        <a href="#" title="Facebook" target="_blank" rel="noopener noreferrer">📘</a>
+        <a href="#" title="Instagram" target="_blank" rel="noopener noreferrer">📷</a>
+        <a href="#" title="LinkedIn" target="_blank" rel="noopener noreferrer">💼</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 導航欄滾動效果
+    window.addEventListener('scroll', function() {
+      const navbar = document.getElementById('navbar');
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    // 平滑滾動 (此處針對頁內錨點，如果您的連結都是跨頁面，此段可選擇性保留或移除)
+    // 若要啟用，請確保您的連結格式為 href="#section-id" 且目標區塊有對應的 id
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const hrefAttribute = this.getAttribute('href');
+        if (hrefAttribute.length > 1 && hrefAttribute.startsWith('#')) { // 避免處理 href="#" 這樣的空錨點，並確認是錨點
+          const target = document.querySelector(hrefAttribute);
+          if (target) {
+            e.preventDefault();
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        }
+      });
+    });
+
+    // 登入功能 (保持不變，後端處理邏輯需您自行實現)
+    async function login() {
+      const username = document.getElementById('login_username')?.value.trim();
+      const password = document.getElementById('login_password')?.value;
+      const msg = document.getElementById('login_message');
+
+      if (!username || !password) {
+        if (msg) {
+          msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> 請輸入使用者名稱與密碼！';
+          msg.className = 'message error';
+        }
+        return;
+      }
+
+      try {
+        if (msg) {
+          msg.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 登入中...';
+          msg.className = 'message';
+        }
+
+        const formData = new URLSearchParams();
+        formData.append('username', username);
+        formData.append('password', password);
+
+        const res = await fetch('/login', { // '/login' 端點需由後端實現
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formData
+        });
+
+        if (res.redirected) {
+          window.location.href = res.url;
+        } else {
+          const text = await res.text();
+          if (msg) {
+            msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + text;
+            msg.className = 'message error';
+          }
+        }
+      } catch (err) {
+        if (msg) {
+          msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> 登入失敗，請稍後再試';
+          msg.className = 'message error';
+        }
+      }
+    }
+
+    // 載入動畫 及 漢堡選單
+    document.addEventListener('DOMContentLoaded', function() {
+      // 載入動畫 (Fade-in)
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+            observer.unobserve(entry.target); // 動畫執行一次後停止觀察
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll('.feature-card, .hero-content, .cta-content').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+        observer.observe(el);
+      });
+      
+      // --- 新增：漢堡選單控制邏輯 ---
+      const hamburgerIcon = document.getElementById('hamburger-icon');
+      const mobileMenuLinks = document.getElementById('mobile-menu-links');
+
+      if (hamburgerIcon && mobileMenuLinks) {
+        hamburgerIcon.addEventListener('click', function() {
+          // 切換漢堡圖示的 active 狀態 (X 形狀)
+          this.classList.toggle('active');
+          // 切換行動版選單的 active 狀態 (顯示/隱藏)
+          mobileMenuLinks.classList.toggle('active');
+        });
+
+        // 可選：點擊行動版選單中的連結後自動關閉選單
+        mobileMenuLinks.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', () => {
+            // 檢查是否為頁內錨點連結
+            const isPageAnchor = link.getAttribute('href').startsWith('#') && link.getAttribute('href').length > 1;
+            
+            if (mobileMenuLinks.classList.contains('active')) {
+              hamburgerIcon.classList.remove('active');
+              mobileMenuLinks.classList.remove('active');
+              
+              // 如果是頁內錨點，平滑滾動的邏輯已由上面的 scrollIntoView 處理
+              // 如果不是頁內錨點（即跳轉到其他頁面），則無需額外處理滾動
+            }
+          });
+        });
+      }
+      // --- 漢堡選單控制邏輯結束 ---
+    });
+  </script>
+</body>
+</html>

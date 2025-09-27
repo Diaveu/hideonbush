@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>關於我們</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <style>
+    :root {
+      --primary-color: #00897B;
+      --secondary-color: #000000;
+      --background-light: #004D40;
+      --text-color: #00897B;
+      --card-bg: #ffffff;
+      --shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      font-family: 'Roboto', 'Noto Sans TC', sans-serif;
+      background: linear-gradient(135deg, var(--background-light) 0%, #B2DFDB 100%);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      position: relative; /* 用於定位首頁按鈕 */
+    }
+
+    .faq-container {
+      background-color: var(--card-bg);
+      margin-top: 60px;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      max-width: 600px;
+      width: 90%;
+    }
+
+    .faq-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .faq-header h1 {
+      font-size: 2rem;
+      color: var(--primary-color);
+      font-weight: 700;
+    }
+
+    .faq-item {
+      margin-bottom: 20px;
+    }
+
+    .faq-question {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--secondary-color);
+      cursor: pointer;
+    }
+
+    .faq-answer {
+      padding: 10px 0;
+      font-size: 1rem;
+      color: var(--secondary-color);
+      border-top: 1px solid #E0F2F1;
+      display: none; /* 初始設置隱藏答案 */
+    }
+
+    .faq-question:hover {
+      color: var(--primary-color);
+    }
+
+    /* 頂部右上角首頁按鈕 */
+    .home-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: var(--primary-color);
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    /* 左上角 logo 圖片 */
+    .logo {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 85px;  /* 根據需求調整大小 */
+      height: auto;
+    }
+
+    @media (max-width: 600px) {
+      .faq-container {
+        padding: 30px 20px;
+      }
+
+      .faq-header h1 {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+  <script>
+    function toggleAnswer(event) {
+      const answer = event.target.nextElementSibling;
+      if (answer.style.display === "none" || answer.style.display === "") {
+        answer.style.display = "block";
+      } else {
+        answer.style.display = "none";
+      }
+    }
+  </script>
+</head>
+<body>
+  <!-- 左上角 logo -->
+  <img src="/static/S__3825671.png" alt="Logo" class="logo" />
+
+  <!-- 右上角首頁按鈕 -->
+  <button class="home-button" onclick="window.location.href='/'">首頁</button>
+
+  <div class="faq-container">
+    <div class="faq-header">
+      <h1>關於我們</h1>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleAnswer(event)">Gaia Bloom設計理念</div>
+      <div class="faq-answer">
+        <p>象徵地球（Gaia）的繁榮與再生，透過環保行動與回收點數機制，鼓勵人們參與永續生活，讓大地如花朵般綻放美好未來。
+            在這個概念中強調 「小行動累積大改變」，就像每一次回收，都能成為滋養地球的養分，不只是為了獲得點數與獎勵，更是希望能共同創造一個更美好的世界。</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleAnswer(event)">核心價值</div>
+      <div class="faq-answer">
+        <p>我們致力於打造一個結合環保意識與科技應用的回收兌換網站，透過數位化機制提升資源回收的便利性與參與度，鼓勵更多民眾主動參與環保行動，網站以「回收即回饋」為核心理念，讓使用者能透過回收行為獲得相對應的點數或獎勵，進一步提升參與動機，強化環保行動的可持續性與實際影響力。 </p>
+      </div>
+   
+    </div>
+  </div>
+</body>
+</html>

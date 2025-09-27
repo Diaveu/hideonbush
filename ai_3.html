@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>智慧回收識別系統</title>
+  <style>
+    :root {
+      --primary-green: #4CAF50;
+      --dark-green: #388E3C;
+      --light-green: #C8E6C9;
+      --text-color: #ffffff;
+      --background-color: #f4f4f4;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--background-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 414px;
+      background-color: #ffffff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .camera-view {
+      position: relative;
+      width: 100%;
+      height: 414px;
+      background-color: #000;
+    }
+
+    .camera-feed {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .scanning-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .scan-line {
+      width: 80%;
+      height: 4px;
+      background-color: var(--primary-green);
+      animation: scan 2s linear infinite;
+    }
+
+    @keyframes scan {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(400px); }
+    }
+
+    .control-section {
+      background-color: var(--primary-green);
+      color: var(--text-color);
+      text-align: center;
+      padding: 20px;
+    }
+
+    .status-message {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .stats-card {
+      background-color: var(--dark-green);
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 10px;
+    }
+
+    .stats-card h3 {
+      margin: 0 0 5px;
+    }
+
+    .detection-result {
+      display: none;
+      padding: 20px;
+      background-color: var(--light-green);
+      text-align: center;
+    }
+
+    .result-message {
+      font-size: 20px;
+      color: var(--dark-green);
+      margin-bottom: 10px;
+    }
+
+    .result-actions button {
+      margin: 5px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .confirm {
+      background-color: var(--primary-green);
+      color: #fff;
+    }
+
+    .cancel {
+      background-color: #f44336;
+      color: #fff;
+    }
+
+    .bottom-tabs {
+      display: flex;
+      justify-content: space-around;
+      background-color: var(--primary-green);
+      padding: 10px 0;
+      position: sticky;
+      bottom: 0;
+    }
+
+    .tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-color);
+      cursor: pointer;
+    }
+
+    .tab i {
+      font-size: 24px;
+    }
+
+    .tab span {
+      font-size: 12px;
+    }
+
+    /* 辨識結果提示動畫 */
+    #resultOverlay {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(76, 175, 80, 0.8);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      z-index: 10;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="camera-view">
+      <img src="https://via.placeholder.com/414x414?text=Camera+Feed" alt="Camera Feed" class="camera-feed" />
+      <div id="scanningOverlay" class="scanning-overlay">
+        <div class="scan-line"></div>
+      </div>
+      <div id="resultOverlay">回收物辨識成功！</div>
+    </div>
+    <div class="control-section">
+      <div class="status-message">今日已辨識 14 件物品</div>
+      <div class="stats-card" id="statsCard">
+        <h3>辨識準確度: 85%</h3>
+        <p>總件數：327 件</p>
+        <p>總重量：158.6 公斤</p>
+      </div>
+    </div>
+    <div class="detection-result" id="detectionResult">
+      <div class="result-message">辨識為：寶特瓶</div>
+      <div class="result-actions">
+        <button class="confirm" onclick="confirmRecognition()">確認</button>
+        <button class="cancel" onclick="cancelRecognition()">取消</button>
+      </div>
+    </div>
+    <div class="bottom-tabs">
+      <div class="tab" onclick="alert('回首頁')">
+        <i class="fas fa-home"></i>
+        <span>首頁</span>
+      </div>
+      <div class="tab" onclick="alert('歷史紀錄')">
+        <i class="fas fa-history"></i>
+        <span>紀錄</span>
+      </div>
+      <div class="tab" onclick="alert('會員資料')">
+        <i class="fas fa-user"></i>
+        <span>會員</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 字體與 icons -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <script>
+    // 開始掃描動畫
+    function startScanning() {
+      document.getElementById('scanningOverlay').style.display = 'flex';
+      setTimeout(() => {
+        // 模擬辨識完成後顯示結果
+        showDetectionResult();
+      }, 3000); // 假設辨識時間為 3 秒
+    }
+
+    // 顯示辨識結果
+    function showDetectionResult() {
+      document.getElementById('scanningOverlay').style.display = 'none';
+      document.getElementById('resultOverlay').style.display = 'flex';
+      document.getElementById('detectionResult').style.display = 'block';
+    }
+
+    // 確認辨識結果
+    function confirmRecognition() {
+      alert('確認回收物品！');
+      document.getElementById('detectionResult').style.display = 'none';
+      document.getElementById('resultOverlay').style.display = 'none';
+    }
+
+    // 取消辨識結果
+    function cancelRecognition() {
+      alert('取消回收物品辨識');
+      document.getElementById('detectionResult').style.display = 'none';
+      document.getElementById('resultOverlay').style.display = 'none';
+    }
+
+    // 開始掃描，啟動過程
+    window.onload = () => {
+      startScanning();
+    };
+  </script>
+</body>
+</html>
