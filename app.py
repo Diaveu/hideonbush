@@ -1,6 +1,12 @@
 from flask import Flask, request, jsonify, session, redirect, render_template, url_for
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import (
+    JWTManager,
+    create_access_token,
+    jwt_required,
+    get_jwt_identity,
+)
+from flask_jwt_extended import verify_jwt_in_request
 import pymysql
 import bcrypt
 import logging
@@ -16,12 +22,27 @@ logging.basicConfig(
 )
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "*"}, r"/login": {"origins": "*"}, r"/register": {"origins": "*"}})
+# Enable CORS with credentials for API routes during development
+CORS(
+    app,
+    supports_credentials=True,
+    resources={
+        r"/api/*": {"origins": ["http://localhost:5000", "http://127.0.0.1:5000"]},
+        r"/login": {"origins": ["http://localhost:5000", "http://127.0.0.1:5000"]},
+        r"/register": {"origins": ["http://localhost:5000", "http://127.0.0.1:5000"]},
+    },
+)
 
 app.config['JWT_SECRET_KEY'] = 'supersecret'
 app.secret_key = 'another_secret'
 jwt = JWTManager(app)
 app.logger = logging.getLogger(__name__)
+
+# Session cookie and lifetime settings (reduce unexpected logouts)
+from datetime import timedelta
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_SECURE'] = False  # set True if using HTTPS
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 
 db_config = {
     'host': 'localhost',
@@ -262,6 +283,8 @@ def login():
                 if is_valid:
                     app.logger.info(f"用戶 {username} 登入成功")
                     
+                    # Persist the session for the configured lifetime
+                    session.permanent = True
                     session['user_id'] = user['id']
                     session['username'] = username
                     
@@ -357,10 +380,30 @@ def get_products():
 # ========= 檢查用戶是否已登入 =========
 @app.route('/api/check-auth', methods=['GET'])
 def check_auth():
+    # Prefer server-side session
     if 'user_id' in session:
         return jsonify({'authenticated': True, 'username': session.get('username')})
-    else:
-        return jsonify({'authenticated': False})
+
+    # Fallback: allow JWT bearer token for clients using token-based auth
+    auth_header = request.headers.get('Authorization', '')
+    if auth_header.startswith('Bearer '):
+        try:
+            verify_jwt_in_request()
+            current_user = get_jwt_identity()
+            return jsonify({'authenticated': True, 'username': current_user})
+        except Exception:
+            return jsonify({'authenticated': False}), 200
+
+    return jsonify({'authenticated': False})
+
+# ========= JSON 登出端點 =========
+@app.route('/api/logout', methods=['POST'])
+def api_logout():
+    try:
+        session.clear()
+        return jsonify({'status': 'success', 'message': '登出成功'}), 200
+    except Exception:
+        return jsonify({'status': 'error', 'message': '登出失敗'}), 500
 
 # ========= 資料庫初始化 =========
 @app.route('/admin/init-db', methods=['GET'])
